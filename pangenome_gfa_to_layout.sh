@@ -31,10 +31,10 @@ done
 
 if test -z "$prefix" 
 then 
-	echo "-------------------------------------"
-	echo "Setting prefix to 'pangenome'"
-	echo "-------------------------------------"
 	prefix='pangenome'
+	echo "-------------------------------------"
+	echo "Set prefix to " $prefix 
+	echo "-------------------------------------"
 else
 	echo "-------------------------------------"
 	echo $prefix "will be used as output prefix"
