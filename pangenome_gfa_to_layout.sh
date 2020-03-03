@@ -19,7 +19,8 @@ while [ "$1" != "" ]; do
 		-t | --tidy )		tidy=1
 					;;
 		-h | --help )		echo "Ensure that all files are in the working directory"
-					echo "-pg pangenome_gfa | -e edges | -m metadata | -t tidy mode | -h help"
+					echo "-pg pangenome_gfa | -e edges | -m metadata"
+					echo "-p prefix (default: pangenome) | -t tidy mode | -h help"
 					exit
 					;;
 		* )			echo "Use -h | --help"
