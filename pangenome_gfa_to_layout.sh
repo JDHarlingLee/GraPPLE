@@ -10,8 +10,11 @@ while [ "$1" != "" ]; do
 		-m | --metadata ) 	shift
 					metadata=$1
 					;;
-		-e | --edges)		shift
+		-e | --edges )		shift
 					edges=$1
+					;;
+		-p | --prefix )		shift
+					prefix=$1
 					;;
 		-t | --tidy )		tidy=1
 					;;
@@ -24,6 +27,18 @@ while [ "$1" != "" ]; do
 	esac
 	shift
 done
+
+if test -z "$prefix" 
+then 
+	echo "-------------------------------------"
+	echo "Setting prefix to 'pangenome'"
+	echo "-------------------------------------"
+	prefix='pangenome'
+else
+	echo "-------------------------------------"
+	echo $prefix "will be used as output prefix"
+	echo "-------------------------------------"
+fi
 
 grep "^S" $pangenome_gfa > nodeclass_${DATETIME}.tmp
 
