@@ -29,8 +29,24 @@ while [ "$1" != "" ]; do
 	shift
 done
 
-if test -z "$prefix" 
-then 
+# Check Input files
+if test -z "$pangenome_gfa"; then
+	echo "ERROR: No pangenome file supplied"
+	exit 1
+fi
+
+if test -z "$metadata"; then
+	echo "ERROR: No metadata file supplied"
+	exit 1
+fi
+
+if test -z "$edges"; then
+	echo "ERROR: No edges file supplied"
+	exit 1
+fi
+
+# Set Prefix
+if test -z "$prefix"; then 
 	prefix='pangenome'
 	echo "-------------------------------------"
 	echo "Set prefix to " $prefix 
