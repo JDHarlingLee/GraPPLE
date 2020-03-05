@@ -75,7 +75,7 @@ awk -F"\t" -v q="\"" {'print "//NODECLASS""\t"q$1q"\t"q$16q"\t"q"all_products"q'
 awk -F"\t" -v q="\"" {'print "//NODECLASS""\t"q$1q"\t"q$17q"\t"q"all_gene_names"q'} $metadata >> metadata_${DATETIME}.layout
 
 # print layout file
-cat edges_${DATETIME}.layout nodeclass_${DATETIME}.layout metadata_${DATETIME}.layout > pangenome_${DATETIME}.layout
+cat edges_${DATETIME}.layout metadata_${DATETIME}.layout nodeclass_${DATETIME}.layout > pangenome_${DATETIME}.layout
 
 echo "-----------------------------"
 echo ""
