@@ -94,7 +94,10 @@ if run_type in ("isolates", "both"):
                         print(f'//NODECLASS\t\"{row[0]}\"\t\"{row[i]}\"\t\"{headers[i]}\"', file = out_file, )     # row[0] prints isolate name
         print("")
         print("...Isolate metadata added")
-
+    
+    else:
+    
+        print("Unable to add isolate metadata")
     
 # For Gene-Gene Comparison
 
@@ -122,16 +125,16 @@ if run_type in ("genes", "both"):
     
     print("---------------------------------------------")
     print("Printing pairwise list to file...")
-
+    
     genes_jac_pw.to_csv(genes_out, sep = '\t', index = False, header = False, encoding='ISO-8859-1')
-
+    
     # Add in Metadata for genes
     
     if args.gene_meta:
         
         print("---------------------------------------------")
         print("Adding gene metadata...")
-    
+        
         gene_meta_in = args.gene_meta
         with open(genes_out, 'a', encoding='ISO-8859-1') as out_file: # a+ appends data to file
             with open(gene_meta_in, 'r', encoding='ISO-8859-1') as csv_file:
@@ -143,7 +146,10 @@ if run_type in ("genes", "both"):
                         
         print("")
         print("...Gene metadata added")
-
+    
+    else:
+        
+        print("Unable to add gene metadata")
 
 print("----------------------------")
 print("Script finished succesfully!")
