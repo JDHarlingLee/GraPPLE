@@ -1,4 +1,4 @@
-# Graphical Pangenome (Large) Exploration
+# Graphical Processing for Pangenome Linked Exploration
 
 #### Support scripts for the visualisation of pangenome analyses in Graphia
 
