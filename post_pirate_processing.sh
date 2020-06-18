@@ -24,8 +24,17 @@ while [ "$1" != "" ]; do
 				-n | --threads )		shift
 										threads=$1
 										;;
-				-h | --help )           echo "Ensure you are executing this script within the output directory of your pangenome analysis"
-                                        exit
+				-h | --help )           echo "------------------------------------------------"
+							echo "Ensure you are executing this script within the output directory of your pangenome analysis"
+							echo ""
+							echo "-t | threshold list (those used in PIRATE run, or subset thereof"
+							echo "-p | include paralogs or not. Default: off"
+							echo "-d | paralog_directory name - new files are created to avoid overwriting originals"
+							echo "-q | path to PIRATE directory - necessary for using PIRATE adapter scripts"
+							echo "-n | number of threads to use"
+                                        		echo ""
+							echo "------------------------------------------------"
+					exit
                                         ;;
                 * )                     echo "Use -h | --help"
                                         exit 1
@@ -88,7 +97,7 @@ fi
 if test -f ./PIRATE.all_alleles.tsv; then
 	echo "PIRATE.all_alleles.tsv already exists"
 else 
-	$path/scripts/link_clusters_runner.pl -l ./loci_list.tab -t $thr_list -o ./ -c ./co-ords/ -parallel $threads --all-alleles-q 
+	$path/scripts/link_clusters_runner.pl -l ./loci_list.tab -t $thr_list -o ./ -c ./co-ords/ -parallel $threads --all-alleles
 fi
 
 # 2. Recreate split_paralogs_loci.tab
