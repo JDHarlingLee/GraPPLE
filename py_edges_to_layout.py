@@ -41,7 +41,7 @@ if __name__ == "__main__":
     parser.add_argument("-e", "--edges", type = str, required = True, help = "pangenome.edges file from PIRATE")
     parser.add_argument("-o", "--file_out", type = str, required = False, default = "", help = "output prefix")
     parser.add_argument("-f", "--filter", type = int, required = False, default = 0, help = "filter edges below this value. Must be integer value. Default: 0")
-    parser.add_argument("-v", "--verbose", action = "store_true", help = "default: on")
+    parser.add_argument("-v", "--verbose", action = "store_false", help = "default: on")
     args = parser.parse_args()
     
     edges_to_layout(args.edges, args.file_out, args.filter, args.verbose)
