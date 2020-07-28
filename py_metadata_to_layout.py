@@ -22,7 +22,7 @@ def metadata_to_layout(layout, metadata, selection, run_type, verbose):
     # Select metadata columns
     
     if selection:
-        with open(metadata, 'r') as csv_file:
+        with open(metadata, 'r', encoding = "ISO-8859-1") as csv_file:
             csv_reader = csv.reader(csv_file, delimiter='\t')   # note use of tab-delimited here
             headers = next(csv_reader, None)    # first row of csv assumed to be headers
             with open(selection) as f:
@@ -32,7 +32,7 @@ def metadata_to_layout(layout, metadata, selection, run_type, verbose):
                     meta_cols_indx.append(headers.index(meta_cols[i]))
     
     else:
-        with open(metadata, 'r') as csv_file:
+        with open(metadata, 'r', encoding = "ISO-8859-1") as csv_file:
             csv_reader = csv.reader(csv_file, delimiter='\t')   # note use of tab-delimited here
             headers = next(csv_reader, None)
             meta_cols_indx = list(range(1, len(headers)))
@@ -42,7 +42,7 @@ def metadata_to_layout(layout, metadata, selection, run_type, verbose):
         
     # Count rows   
     
-    with open(metadata, 'r') as csv_file:
+    with open(metadata, 'r', encoding = "ISO-8859-1") as csv_file:
         csv_reader = csv.reader(csv_file, delimiter='\t')
         row_count = sum(1 for row in csv_reader)
     
@@ -53,7 +53,7 @@ def metadata_to_layout(layout, metadata, selection, run_type, verbose):
     # Append (selected) metadata to layout file
     
     with open(layout, 'a') as out_file:
-        with open(metadata, 'r') as csv_file:
+        with open(metadata, 'r', encoding = "ISO-8859-1") as csv_file:
             csv_reader = csv.reader(csv_file, delimiter='\t')
             for row in csv_reader:
                 for i in meta_cols_indx:     # start at 1 to avoid using 0 index, assuming this is the isolate/gene name 
