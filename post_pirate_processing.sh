@@ -71,14 +71,6 @@ if [[ $paralogs = 1 ]]; then
 	fi
 fi
 
-if test -z "$high"; then
-	high=100000
-fi
-
-if test -z "$low"; then
-	low=1
-fi
-
 
 # For debugging:
 #echo $thr_list
@@ -86,9 +78,7 @@ fi
 #echo $path
 #echo $threads
 #echo $paralog_dir
-#echo $high
-#echo $low
-
+#echo "high and low set later in script"
 #exit
 
 
@@ -120,6 +110,14 @@ else
 fi
 
 # 4. Split all_alleles by thresholds
+
+if test -z $high; then
+	high=$(cut -f7 ./PIRATE.all_alleles.tsv | sort -n | tail -1)
+fi
+
+if test -z $low; then
+	low=$(cut -f7 ./PIRATE.all_alleles.tsv | sort -n | head -2 | tail -1)
+fi
 
 for i in ${thr_list//,/ }
 do
