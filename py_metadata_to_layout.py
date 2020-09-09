@@ -19,11 +19,19 @@ def metadata_to_layout(layout, metadata, selection, run_type, verbose):
         print("ERROR: Invalid run type")
         exit(1)
     
-    # Select metadata columns
+    # Check and set metadata delimiter
+    if metadata.endswith('.csv'):
+        metadata_delim = ','
+    elif metadata.endswith('.tsv'):
+        metadata_delim = '\t'
+    else:
+        print("ERROR: Invalid metadata file type. Please provide in either .csv or .tsv format")
+        exit(1)
     
+    # Select metadata columns
     if selection:
         with open(metadata, 'r', encoding = "ISO-8859-1") as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter='\t')   # note use of tab-delimited here
+            csv_reader = csv.reader(csv_file, delimiter=metadata_delim)   # note use of tab-delimited here
             headers = next(csv_reader, None)    # first row of csv assumed to be headers
             with open(selection) as f:
                 meta_cols = f.read().splitlines()
@@ -33,7 +41,7 @@ def metadata_to_layout(layout, metadata, selection, run_type, verbose):
     
     else:
         with open(metadata, 'r', encoding = "ISO-8859-1") as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter='\t')   # note use of tab-delimited here
+            csv_reader = csv.reader(csv_file, delimiter=metadata_delim)   # note use of tab-delimited here
             headers = next(csv_reader, None)
             meta_cols_indx = list(range(1, len(headers)))
         if verbose:
@@ -43,7 +51,7 @@ def metadata_to_layout(layout, metadata, selection, run_type, verbose):
     # Count rows   
     
     with open(metadata, 'r', encoding = "ISO-8859-1") as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter='\t')
+        csv_reader = csv.reader(csv_file, delimiter=metadata_delim)
         row_count = sum(1 for row in csv_reader)
     
     if verbose:
@@ -54,7 +62,7 @@ def metadata_to_layout(layout, metadata, selection, run_type, verbose):
     
     with open(layout, 'a') as out_file:
         with open(metadata, 'r', encoding = "ISO-8859-1") as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter='\t')
+            csv_reader = csv.reader(csv_file, delimiter=metadata_delim)
             for row in csv_reader:
                 for i in meta_cols_indx:     # start at 1 to avoid using 0 index, assuming this is the isolate/gene name 
                     if not row[i] in (""):   # avoids printing blanks
