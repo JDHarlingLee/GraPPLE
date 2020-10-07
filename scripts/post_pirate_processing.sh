@@ -24,17 +24,15 @@ while [ "$1" != "" ]; do
 				-n | --threads )		shift
 										threads=$1
 										;;
-				-h | --help )           echo "------------------------------------------------"
-							echo "Ensure you are executing this script within the output directory of your pangenome analysis"
-							echo ""
-							echo "-t | threshold list (those used in PIRATE run, or subset thereof"
-							echo "-p | include paralogs or not. Default: off"
-							echo "-d | paralog_directory name - new files are created to avoid overwriting originals"
-							echo "-q | path to PIRATE directory - necessary for using PIRATE adapter scripts"
-							echo "-n | number of threads to use"
-                                        		echo ""
-							echo "------------------------------------------------"
-					exit
+				-h | --help )           echo "------------------------------------------------\n"
+										echo "Ensure you are executing this script within the output directory of your pangenome analysis\n"
+										echo "-t | threshold list (those used in PIRATE run, or subset thereof"
+										echo "-p | include paralogs or not. Default: off"
+										echo "-d | paralog_directory name - new files are created to avoid overwriting originals"
+										echo "-q | path to PIRATE directory - necessary for using PIRATE adapter scripts"
+										echo "-n | number of threads to use\n"
+										echo "------------------------------------------------"
+										exit 0
                                         ;;
                 * )                     echo "Use -h | --help"
                                         exit 1
@@ -42,7 +40,7 @@ while [ "$1" != "" ]; do
         shift
 done
 
-# Check Input files
+# Check Inputs
 if test -z "$thr_list"; then
         echo "ERROR: No thresholds supplied"
         exit 1
