@@ -5,7 +5,7 @@ def main():
 	import argparse
 	
 	parser = argparse.ArgumentParser(description='Arguments for main GrapPLE runner',
-					 prog = 'grapple')
+					 				prog = 'GraPPLE')
 	
 	parser.add_argument('-b', '--binary-data', required = True, type = str)
 	parser.add_argument('-g', '--gene-data', required = True, type = str)
@@ -13,8 +13,7 @@ def main():
 	parser.add_argument('-p', '--pangenome', required = True)
 	parser.add_argument('-e', '--edges', required = True)
 	parser.add_argument('-t', '--threads', required = False, default = 2, type = int)
-	
-	parser.add_argument('-v', '--version', action = 'version', version = '%(prog)s 0.0.0')
+	parser.add_argument('-v', '--version', action = 'version', version = '%(prog)s 0.1.0')
 	
 	args = parser.parse_args()
 
@@ -22,4 +21,3 @@ def main():
 	
 if __name__ == "__main__":
 	main() 
-

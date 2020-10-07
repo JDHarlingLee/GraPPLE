@@ -45,7 +45,7 @@ def jaccard_sim(input, out, isol_meta, gene_meta, run_type, isol_filt, gene_filt
         isols = data.iloc[:,1:]
         isols_trans = isols.transpose()
         isols_jac_sim = pd.DataFrame((1 - pairwise_distances(isols_trans.to_numpy(), metric = "jaccard", n_jobs = args.threads)), index=isols.columns, columns=isols.columns)
-        
+
         # convert to pairwise
         
         isols_to_keep = np.triu(np.ones(isols_jac_sim.shape), k=1).astype('bool').reshape(isols_jac_sim.size)
@@ -91,13 +91,13 @@ def jaccard_sim(input, out, isol_meta, gene_meta, run_type, isol_filt, gene_filt
         
         print("\n-----------------------------------------------\n")
         print("Calculating jaccard distance between genes...\n")
-        genes = data.transpose()
-        genes.columns = genes.iloc[0]
-        genes = genes.drop(['Gene'])
-        genes_trans = genes.transpose() # why are we transposing this twice?!
-        genes_jac_dist = pairwise_distances(genes_trans.to_numpy(), metric = "jaccard", n_jobs = args.threads)
-        genes_jac_sim = pd.DataFrame((1 - genes_jac_dist), index=genes.columns, columns=genes.columns)
-        
+        genes = data
+        genes.index = genes['Gene']
+        genes = genes.drop(['Gene'], axis = 1)
+
+        genes_jac_dist = pairwise_distances(genes.to_numpy(), metric = "jaccard", n_jobs = 8)
+        genes_jac_sim = pd.DataFrame((1 - genes_jac_dist), index=genes.index, columns=genes.index)
+
         # convert to pairwise
         
         genes_to_keep = np.triu(np.ones(genes_jac_sim.shape), k=1).astype('bool').reshape(genes_jac_sim.size)
