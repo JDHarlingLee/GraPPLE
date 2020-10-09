@@ -7,7 +7,7 @@ import csv
 
 from sklearn.metrics.pairwise import pairwise_distances
 
-from ./py_metadata_to_layout import metadata_to_layout
+from .py_metadata_to_layout import metadata_to_layout
 
 
 # Parse Arguments
