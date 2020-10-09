@@ -7,9 +7,6 @@
 # Heavily relies on PIRATE's excellent adapter scripts, provided in the PIRATE repository
 # Please see SionBayliss/PIRATE for more information on these
 
-# error handling
-set -oe pipefail
-
 # read variables
 while [ "$1" != "" ]; do
         case $1 in
@@ -63,7 +60,7 @@ if test -z "$threads"; then
         threads=2
 fi
 
-if [[ $paralogs = 1 ]]; then
+if [ $paralogs -eq 1 ]; then
 	if test -z "$paralog_dir"; then
 		paralog_dir="with-paralogs"
 	fi
@@ -75,13 +72,13 @@ fi
 
 
 #For debugging:
-echo $thr_list
-echo $paralogs
-echo $path
-echo $threads
-echo $paralog_dir
-echo "high and low set later in script"
-exit 0
+#echo $thr_list
+#echo $paralogs
+#echo $path
+#echo $threads
+#echo $paralog_dir
+#echo "high and low set later in script"
+#exit 0
 
 
 # 1. Recreate PIRATE.all_alleles.tsv
