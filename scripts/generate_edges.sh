@@ -7,6 +7,10 @@
 # Heavily relies on PIRATE's excellent adapter scripts, provided in the PIRATE repository
 # Please see SionBayliss/PIRATE for more information on these
 
+# error handling
+set -oe pipefail
+
+# read variables
 while [ "$1" != "" ]; do
         case $1 in
                 -i | --input )	    	shift
