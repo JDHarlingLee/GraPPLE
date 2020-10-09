@@ -2,8 +2,8 @@ import argparse
 import os
 import subprocess
 
-from .py_jaccard_sim import jaccard_sim
-from .py_edges_to_layout import edges_to_layout
+#from .py_jaccard_sim import jaccard_sim
+#from .py_edges_to_layout import edges_to_layout
 
 def main():
 	parser = argparse.ArgumentParser(description='GraPPLE (Graphical Processing for Pangenome Linked Exploration',
@@ -31,7 +31,7 @@ def main():
 	main = parser.parse_args()
 
 	# 1. post_pirate_processing.sh
-	post_pirate_processing = subprocess.run(["bash", "grapple/post_pirate_processing.sh", 
+	post_pirate_processing = subprocess.run(['./post_pirate_processing.sh', 
 							"-t", main.thresholds,
 							"-p", str(main.split_paralogs), 
 							"-d", main.paralog_dir, 
@@ -48,6 +48,8 @@ def main():
 
 	print("\nPIRATE files processed. Now calculating similarity matrices...\n")
 
+	exit(0)
+
 	# 2. jaccard similarity
 	for i in range(0, len(gene_bin)):
 		jaccard_sim(input = gene_bin[i],
@@ -58,7 +60,7 @@ def main():
 					threads = main.threads)
 
 	# 3. generate_edges.sh
-	edges_files = subprocess.run(["bash", "grapple/post_pirate_processing.sh", 
+	edges_files = subprocess.run(["./post_pirate_processing.sh", 
 							"-t", main.thresholds,
 							"-p", str(main.split_paralogs), 
 							"-d", main.paralog_dir, 
