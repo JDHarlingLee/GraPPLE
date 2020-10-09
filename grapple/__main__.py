@@ -1,5 +1,5 @@
 import argparse
-
+import os
 import subprocess
 
 from .py_jaccard_sim import jaccard_sim
@@ -15,9 +15,6 @@ def main():
 	parser.add_argument('-p', '--split_paralogs', action = 'store_true')
 	parser.add_argument('-d', '--paralog_dir', default = "with-paralogs")
 
-	# required for jaccard distances
-	parser.add_argument('-b', '--binary-data', required = True, type = str)
-
 	# optional for jaccard distances
 	parser.add_argument('-m', '--metadata', required = False, type = str)
 	parser.add_argument('-g', '--gene-data', required = False, type = str)
@@ -28,7 +25,6 @@ def main():
 	# required for edges to layout
 	parser.add_argument('-u', '--group-genes', action = 'store_false')
 	
-
 	# other
 	parser.add_argument('-v', '--version', action = 'version', version = '%(prog)s 0.1.0')
 
@@ -39,7 +35,8 @@ def main():
 							"-t", main.thresholds,
 							"-p", str(main.split_paralogs), 
 							"-d", main.paralog_dir, 
-							"-q", main.path_to_PIRATE], 
+							"-q", main.path_to_PIRATE],
+							cwd=os.path.dirname(os.path.realpath(__file__)), 
 							stdout=subprocess.PIPE, 
 							shell=True)
 
@@ -66,6 +63,7 @@ def main():
 							"-p", str(main.split_paralogs), 
 							"-d", main.paralog_dir, 
 							"-q", main.path_to_PIRATE], 
+							cwd=os.path.dirname(os.path.realpath(__file__)),							
 							stdout=subprocess.PIPE, 
 							shell=True)
 
