@@ -3,9 +3,11 @@
 
 import pandas as pd
 import numpy as np
-from sklearn.metrics.pairwise import pairwise_distances
 import csv
-from py_metadata_to_layout import metadata_to_layout
+
+from sklearn.metrics.pairwise import pairwise_distances
+
+from ./py_metadata_to_layout import metadata_to_layout
 
 
 # Parse Arguments
