@@ -7,12 +7,12 @@ import csv
 
 from sklearn.metrics.pairwise import pairwise_distances
 
-from .py_metadata_to_layout import metadata_to_layout
+from py_metadata_to_layout import metadata_to_layout
 
 
 # Parse Arguments
 
-def jaccard_sim(input, out, isol_meta, gene_meta, run_type, threads):
+def jaccard_sim(input, out, isol_meta, gene_meta, run_type, isol_filt, gene_filt, threads):
     
     # Specify run type
     # This set-up was used to avoid reading large files into memory twice if calculating both isolate and gene sim together

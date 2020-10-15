@@ -33,7 +33,7 @@ def generate_edges (input, output_dir, pirate_path, threads):
                             os.path.join(args.pirate_path, script),
                             "--input", out_file_tsv,
                             "--output", output,
-                            "--gffs", "/modified_gffs",
+                            "--gffs", "modified_gffs",
                             "--no-cluster",
                             "--gfa1"],
 			    stdin=subprocess.PIPE)
