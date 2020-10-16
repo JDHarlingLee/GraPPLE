@@ -6,8 +6,10 @@ from shutil import copyfile
 
 def metadata_to_layout(layout, metadata, selection, run_type, verbose):
     
+    if not os.path.isfile(layout):
+        print("\nERROR: .layout file not found.")
+
     # Check and set run type
-    
     if run_type in ("c", "cp", "copy"):
         # print("Copy of layout file will be used")
         file_base = os.path.splitext(layout)[0]
