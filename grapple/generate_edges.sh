@@ -71,7 +71,7 @@ output_file_tsv=${input_file%.tsv}.allelesAsGeneFamily.tsv
 awk -F '\t' 'BEGIN { OFS = FS } ; { if (NR > 1) { $2 = $1 } } ; {print}' $input_file > $output_folder/$output_file_tsv
 
 # 2. Generate edge files at each threshold specified
-$path/scripts/pangenome_graph.pl --input $output_file --output $output_folder --gffs ./modified_gffs/ --no-cluster --gfa1 
+$path/scripts/pangenome_graph.pl --input $output_folder/$output_file_tsv --output $output_folder --gffs ./modified_gffs/ --no-cluster --gfa1 
 
 # 3. List files generated (for __main__.py)
 
