@@ -100,10 +100,13 @@ fi
 # 3. Create paralog files
 
 if [[ $paralogs = 1 ]]; then
-	mkdir ${paralog_dir}/
-	${path}/scripts/link_clusters_runner.pl -l ./loci_list.tab -l ./split_paralog_loci.tab -t $thr_list -o ./${paralog_dir}/ -c ./co-ords/ --paralogs ./loci_paralog_categories.tab -e ./paralog_clusters.tab --parallel $threads --all-alleles
 	wp="wp."
-	mv ${paralog_dir}/PIRATE.all_alleles.tsv ./PIRATE.all_alleles.wp.tsv
+	if test -f ./PIRATE.all_alleles.tsv; then
+		echo "./PIRATE.all_alleles.tsv exists. Will use this"
+	else
+		mkdir ${paralog_dir}/
+		${path}/scripts/link_clusters_runner.pl -l ./loci_list.tab -l ./split_paralog_loci.tab -t $thr_list -o ./${paralog_dir}/ -c ./co-ords/ --paralogs ./loci_paralog_categories.tab -e ./paralog_clusters.tab --parallel $threads --all-alleles
+		mv ${paralog_dir}/PIRATE.all_alleles.tsv ./PIRATE.all_alleles.wp.tsv
 else
 	wp=""
 fi
