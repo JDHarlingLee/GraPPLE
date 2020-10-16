@@ -8,6 +8,7 @@ def metadata_to_layout(layout, metadata, selection, run_type, verbose):
     
     if not os.path.isfile(layout):
         print("\nERROR: .layout file not found.")
+        exit(1)
 
     # Check and set run type
     if run_type in ("c", "cp", "copy"):
