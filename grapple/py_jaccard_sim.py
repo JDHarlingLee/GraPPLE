@@ -27,14 +27,17 @@ def jaccard_sim(input, out, isol_meta, gene_meta, run_type, sim_metric, isol_fil
     types_dict.update({col: bool for col in col_names if col not in types_dict})
     
     data = pd.read_csv(args.input, sep = '\t', dtype=types_dict)
-    data.colunns = data.columns.strip.replace(r'.gff$', '') # removes .gff from end of isolate names (e.g. from PPanGGoLIN ouputs) - comment out if necessary
+    data.columns = data.columns.str.replace('.gff$', '') # removes .gff from end of isolate names (e.g. from PPanGGoLIN ouputs) - comment out if necessary
     
     # Set file names for write out
     
-    file_out_prefix = args.out
-    genes_out = f'{file_out_prefix}_genes_jacc_dist_pw.txt'
-    isols_out = f'{file_out_prefix}_isols_jacc_dist_pw.txt'
-    
+    if args.out:
+        file_out_prefix = args.out
+        genes_out = f'{file_out_prefix}_genes_jacc_dist_pw.txt'
+        isols_out = f'{file_out_prefix}_isols_jacc_dist_pw.txt'
+    else:
+        isols_out = 'isols_jacc_dist_pw.txt'
+        genes_out = 'genes_jacc_dist_pw.txt'
     
     # For Isolate-Isolate Comparison
     
