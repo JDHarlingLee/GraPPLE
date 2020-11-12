@@ -12,13 +12,12 @@ def metadata_to_layout(layout, metadata, selection, run_type, verbose):
 
     # Check and set run type
     if run_type in ("c", "cp", "copy"):
-        # print("Copy of layout file will be used")
         file_base = os.path.splitext(layout)[0]
         file_copy_name = str(file_base + '-wMeta.layout')
         copyfile(layout, file_copy_name)
         layout = file_copy_name
         if verbose:
-            print("\nMetadata will be added to the file %s\n" % layout)
+            print("\nMetadata will be added to the copied file %s\n" % layout)
 
     elif run_type in ("a", "ap", "append"):
         if verbose:
@@ -32,6 +31,8 @@ def metadata_to_layout(layout, metadata, selection, run_type, verbose):
     if metadata.endswith('.csv'):
         metadata_delim = ','
     elif metadata.endswith('.tsv'):
+        metadata_delim = '\t'
+    elif metadata.endswith('.Rtab'):
         metadata_delim = '\t'
     else:
         print("ERROR: Invalid metadata file type. Please provide in either .csv or .tsv format")

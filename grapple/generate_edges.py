@@ -36,7 +36,7 @@ def generate_edges (input, output_dir, pirate_path, threads):
                             "--gffs", "modified_gffs",
                             "--no-cluster",
                             "--gfa1"],
-			    stdin=subprocess.PIPE)
+			                stdin=subprocess.PIPE)
 
 
 if __name__ == "__main__":

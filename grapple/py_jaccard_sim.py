@@ -4,15 +4,13 @@
 import pandas as pd
 import numpy as np
 import csv
-
 from sklearn.metrics.pairwise import pairwise_distances
-
 from py_metadata_to_layout import metadata_to_layout
 
 
 # Parse Arguments
 
-def jaccard_sim(input, out, isol_meta, gene_meta, run_type, isol_filt, gene_filt, threads):
+def jaccard_sim(input, out, isol_meta, gene_meta, run_type, sim_metric, isol_filt, gene_filt, threads):
     
     # Specify run type
     # This set-up was used to avoid reading large files into memory twice if calculating both isolate and gene sim together
@@ -22,13 +20,14 @@ def jaccard_sim(input, out, isol_meta, gene_meta, run_type, isol_filt, gene_filt
         exit(1)
         
     # Load Data
-    # specifies data types for import; first column string (gene names), all others bool for jaccard calc
+    # specifies data types for import; first column string (gene names), all others bool for similarity calc
     
     col_names = pd.read_csv(args.input, nrows=0, sep = '\t').columns
     types_dict = {'Gene': str}
     types_dict.update({col: bool for col in col_names if col not in types_dict})
-    data = pd.read_csv(args.input, sep = '\t', dtype=types_dict)
     
+    data = pd.read_csv(args.input, sep = '\t', dtype=types_dict)
+    data.colunns = data.columns.strip.replace(r'.gff$', '') # removes .gff from end of isolate names (e.g. from PPanGGoLIN ouputs) - comment out if necessary
     
     # Set file names for write out
     
@@ -46,7 +45,7 @@ def jaccard_sim(input, out, isol_meta, gene_meta, run_type, isol_filt, gene_filt
         
         isols = data.iloc[:,1:]
         isols_trans = isols.transpose()
-        isols_jac_sim = pd.DataFrame((1 - pairwise_distances(isols_trans.to_numpy(), metric = "jaccard", n_jobs = args.threads)), index=isols.columns, columns=isols.columns)
+        isols_jac_sim = pd.DataFrame((1 - pairwise_distances(isols_trans.to_numpy(), metric = sim_metric, n_jobs = args.threads)), index=isols.columns, columns=isols.columns)
 
         # convert to pairwise
         
@@ -63,30 +62,12 @@ def jaccard_sim(input, out, isol_meta, gene_meta, run_type, isol_filt, gene_filt
         print(" - Isolate pairwise distance file printed\n")
         
         # Add in Metadata for isolates
-        
         if args.isol_meta:
-            print("\n-----------------------------------------------\n")
-            print(" - Adding isolate metadata...\n")
-            
-            isol_meta_in = args.isol_meta
-            with open(isols_out, 'a', encoding='ISO-8859-1') as out_file: # a+ appends data to file
-                with open(isol_meta_in, 'r', encoding='ISO-8859-1') as csv_file:
-                    csv_reader = csv.reader(csv_file, delimiter=',')
-                    headers = next(csv_reader, None)    # first row of csv assumed to be headers - i.e. metadata categories (e.g. host, CC)
-                    length = len(headers)
-                    for row in csv_reader:
-                        for i in range(1, length):      # start at 1 to avoid using 0 index, assuming this is the isolate name
-                            print(f'//NODECLASS\t\"{row[0]}\"\t\"{row[i]}\"\t\"{headers[i]}\"', file = out_file)     # row[0] prints isolate name
-
-            print(" - Isolate metadata added\n")
-        
-        else:
-        
-            print(" - No isolate metadata file has been provided\n")
-        
-        if args.isol_meta:
+            print("Adding Isolate metadata:\n")
             metadata_to_layout(isols_out, isol_meta, selection=0, run_type="append", verbose=1)
-        
+        else:
+            print("No isolate metadata file provided.\n")
+
     # For Gene-Gene Comparison
     
     if run_type in ("genes", "both"):
@@ -97,7 +78,7 @@ def jaccard_sim(input, out, isol_meta, gene_meta, run_type, isol_filt, gene_filt
         genes.index = genes['Gene']
         genes = genes.drop(['Gene'], axis = 1)
 
-        genes_jac_dist = pairwise_distances(genes.to_numpy(), metric = "jaccard", n_jobs = 8)
+        genes_jac_dist = pairwise_distances(genes.to_numpy(), metric = sim_metric, n_jobs = 8)
         genes_jac_sim = pd.DataFrame((1 - genes_jac_dist), index=genes.index, columns=genes.index)
 
         # convert to pairwise
@@ -115,25 +96,11 @@ def jaccard_sim(input, out, isol_meta, gene_meta, run_type, isol_filt, gene_filt
         genes_jac_pw.to_csv(genes_out, sep = '\t', index = False, header = False, encoding='ISO-8859-1')
         
         # Add in Metadata for genes
-        
         if args.gene_meta:
-                     
-            print(" - Adding gene metadata...\n")
-            
-            gene_meta_in = args.gene_meta
-            with open(genes_out, 'a', encoding='ISO-8859-1') as out_file: # a+ appends data to file
-                with open(gene_meta_in, 'r', encoding='ISO-8859-1') as csv_file:
-                    csv_reader = csv.reader(csv_file, delimiter='\t')
-                    headers = next(csv_reader, None)    # first row of csv assumed to be headers - i.e. metadata categories (e.g. host, CC)
-                    for row in csv_reader:
-                        for i in range(1, 20):      # start at 1 to avoid using 0 index, assuming this is the isolate name
-                            print(f'//NODECLASS\t\"{row[0]}\"\t\"{row[i]}\"\t\"{headers[i]}\"', file = out_file)     # row[0] prints gene name
-                            
-            print(" - Gene metadata added\n")
-        
+            print("Adding Isolate metadata:\n")
+            metadata_to_layout(genes_out, gene_meta, selection=0, run_type="append", verbose=1)
         else:
-            
-            print("No gene metadata file has been provided\n")
+            print("No gene metadata provided\n")
     
     print("-----------------------------------------------\n")
     print("Script finished succesfully!\n")
@@ -147,10 +114,11 @@ if __name__ == "__main__":
     parser.add_argument("-m", "--isol_meta", type = str, required = False, help = ".csv isolate metadata")
     parser.add_argument("-g", "--gene_meta", type = str, required = False, help = ".tsv gene metadata, e.g. PIRATE all_alleles.tsv file")
     parser.add_argument("-r", "--run_type", type = str, required = False, default = "both", help = "calculate similarity of isolates (\"isolates\"), genes (\"genes\" or both (\"both\"). Defaults to both")
+    parser.add_argument("-s", "--sim_metric", type = str, required = False, default = "jaccard", help = "set metric for similarity calculation. Default: jaccard")
     parser.add_argument("-f", "--isol_filt", type = float, required = False, default = 0.5, help = "optional filter for isolate pairwise similarity")
     parser.add_argument("-e", "--gene_filt", type = float, required = False, default = 0.5, help = "optional filter for gene pairwise similarity")
     parser.add_argument("-t", "--threads", type = int, required = False, default = 1, help = "number of threads to be used")
     args = parser.parse_args()
     
-    jaccard_sim(args.input, args.out, args.isol_meta, args.gene_meta, args.run_type, args.isol_filt, args.gene_filt, args.threads)
+    jaccard_sim(args.input, args.out, args.isol_meta, args.gene_meta, args.run_type, args.sim_metric, args.isol_filt, args.gene_filt, args.threads)
 
