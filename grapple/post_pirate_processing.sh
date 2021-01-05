@@ -1,4 +1,4 @@
-#!\bin\bash
+#!/usr/bin/bash
 
 # Author: JDHL
 # Basic runner script for adapting PIRATE output for use in GrapPLE/Graphia
@@ -6,9 +6,6 @@
 # Can include paralogs or not (default)
 # Heavily relies on PIRATE's excellent adapter scripts, provided in the PIRATE repository
 # Please see SionBayliss/PIRATE for more information on these
-
-# error handling
-set -oe pipefail
 
 # read variables
 while [ "$1" != "" ]; do
@@ -28,17 +25,17 @@ while [ "$1" != "" ]; do
 				-n | --threads )		shift
 										threads=$1
 										;;
-				-h | --help )           echo "------------------------------------------------\n"
-										echo "Ensure you are executing this script within the output directory of your pangenome analysis\n"
-										echo "-t | threshold list (those used in PIRATE run, or subset thereof"
-										echo "-p | include paralogs or not. Default: off"
-										echo "-d | paralog_directory name - new files are created to avoid overwriting originals"
-										echo "-q | path to PIRATE directory - necessary for using PIRATE adapter scripts"
-										echo "-n | number of threads to use\n"
-										echo "------------------------------------------------"
+				-h | --help )           printf "\n------------------------------------------------\n"
+										printf "\nEnsure you are executing this script within the output directory of your pangenome analysis\n"
+										printf "\n-t | threshold list (those used in PIRATE run, or subset thereof"
+										printf "\n-p | include paralogs or not. Default: off"
+										printf "\n-d | paralog_directory name - new files are created to avoid overwriting originals"
+										printf "\n-q | path to PIRATE directory - necessary for using PIRATE adapter scripts"
+										printf "\n-n | number of threads to use\n"
+										printf "\n------------------------------------------------\n"
 										exit 0
                                         ;;
-                * )                     echo "Use -h | --help"
+                * )                     printf "\nUse -h | --help"
                                         exit 1
         esac
         shift
@@ -63,7 +60,7 @@ if test -z "$threads"; then
         threads=2
 fi
 
-if [[ $paralogs = 1 ]]; then
+if [ $paralogs -eq 1 ]; then
 	if test -z "$paralog_dir"; then
 		paralog_dir="with-paralogs"
 	fi
@@ -74,14 +71,14 @@ if [[ $paralogs = 1 ]]; then
 fi
 
 
-# For debugging:
+#For debugging:
 #echo $thr_list
 #echo $paralogs
 #echo $path
 #echo $threads
 #echo $paralog_dir
 #echo "high and low set later in script"
-#exit
+#exit 0
 
 
 # 1. Recreate PIRATE.all_alleles.tsv
@@ -103,10 +100,13 @@ fi
 # 3. Create paralog files
 
 if [[ $paralogs = 1 ]]; then
-	mkdir ${paralog_dir}/
-	${path}/scripts/link_clusters_runner.pl -l ./loci_list.tab -l ./split_paralog_loci.tab -t $thr_list -o ./${paralog_dir}/ -c ./co-ords/ --paralogs ./loci_paralog_categories.tab -e ./paralog_clusters.tab --parallel $threads --all-alleles
 	wp="wp."
-	mv ${paralog_dir}/PIRATE.all_alleles.tsv ./PIRATE.all_alleles.wp.tsv
+	if test -f ./PIRATE.all_alleles.tsv; then
+		echo "./PIRATE.all_alleles.tsv exists. Will use this"
+	else
+		mkdir ${paralog_dir}/
+		${path}/scripts/link_clusters_runner.pl -l ./loci_list.tab -l ./split_paralog_loci.tab -t $thr_list -o ./${paralog_dir}/ -c ./co-ords/ --paralogs ./loci_paralog_categories.tab -e ./paralog_clusters.tab --parallel $threads --all-alleles
+		mv ${paralog_dir}/PIRATE.all_alleles.tsv ./PIRATE.all_alleles.wp.tsv
 else
 	wp=""
 fi
@@ -133,10 +133,16 @@ do
 	$path/tools/convert_format/PIRATE_to_Rtab.pl -i ./PIRATE.acc_alleles.${i}.${wp}tsv -o ./PIRATE.acc_alleles.${i}.${wp}binary.tsv --low 0 --high 1 
 done
 
+# 6. Return file names (for __main__.py)
 
+declare -a files
+for i in ${thr_list//,/ }
+do
+	files+=(PIRATE.acc_alleles.${i}.${wp}tsv)
+	files+=(PIRATE.acc_alleles.${i}.${wp}binary.tsv)
+done
 
-
-
+echo "${files[@]}"
 
 
 

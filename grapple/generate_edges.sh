@@ -47,9 +47,12 @@ if test -z "$input_file"; then
 	exit 1
 fi
 
-if test -d "$output_folder"; then
-	printf "\nERROR: Output folder already exists"
-	exit 1
+if test -z "$output_folder"; then
+	output_folder="pangenome_maps/"
+	if test -d "$output_folder"; then
+		printf "\nERROR: Output folder already exists"
+		exit 1
+	fi
 fi
 
 if test -z "$path"; then
@@ -63,10 +66,20 @@ fi
 
 # Set output file names
 output_file_tsv=${input_file%.tsv}.allelesAsGeneFamily.tsv
-output_file_edges=${input_file%.tsv}.allelesAsGeneFamily.edges
 
 # 1. Generate alleles as gene family files - necessary for edges/layout file on higher thresholds
-awk -F '\t' 'BEGIN { OFS = FS } ; { if (NR > 1) { $2 = $1 } } ; {print}' $input_file > pangenome_maps/$output_file_tsv
+awk -F '\t' 'BEGIN { OFS = FS } ; { if (NR > 1) { $2 = $1 } } ; {print}' $input_file > $output_folder/$output_file_tsv
 
 # 2. Generate edge files at each threshold specified
-$path/scripts/pangenome_graph.pl --input $output_file --output pangenome_maps/$output_file_edges --gffs ./modified_gffs/ --no-cluster --gfa1 
+$path/scripts/pangenome_graph.pl --input $output_folder/$output_file_tsv --output $output_folder --gffs ./modified_gffs/ --no-cluster --gfa1 
+
+# 3. List files generated (for __main__.py)
+
+declare -a files
+for i in ${thr_list//,/ }
+do
+	files+=$output_folder/$output_file_edges
+done
+
+echo "${files[@]}"
+
