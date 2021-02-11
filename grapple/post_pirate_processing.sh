@@ -60,7 +60,7 @@ if test -z "$threads"; then
         threads=2
 fi
 
-if [ $paralogs -eq 1 ]; then
+if [[ $paralogs -eq 1 ]]; then
 	if test -z "$paralog_dir"; then
 		paralog_dir="with-paralogs"
 	fi
@@ -99,7 +99,7 @@ fi
 
 # 3. Create paralog files
 
-if [[ $paralogs = 1 ]]; then
+if [[ $paralogs -eq 1 ]]; then
 	wp="wp."
 	if test -f ./PIRATE.all_alleles.tsv; then
 		echo "./PIRATE.all_alleles.tsv exists. Will use this"
