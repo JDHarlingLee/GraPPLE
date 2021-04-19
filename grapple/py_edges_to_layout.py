@@ -33,7 +33,10 @@ def edges_to_layout(edge_file, file_out, edge_filter, group_genes, verbose):
         df = df.reset_index()
         
         df = df[df.edge_weight > edge_filter]
-        filtered = total - grouped - len(df)
+        
+        if group_genes:
+            filtered = total - grouped - len(df)
+        
         df.to_csv(outfile, sep = '\t', index = False, header = False)
         
         written = len(df)
@@ -41,7 +44,7 @@ def edges_to_layout(edge_file, file_out, edge_filter, group_genes, verbose):
         if verbose:
             if group_genes:
                 print(" -", grouped, "edges grouped")
-            print(" -", filtered, "edges filtered")
+                print(" -", filtered, "edges filtered")
             print(" -", written, "edges written\n")
             print("Edge file succesfully converted to", file_out, "\n")
             print("-------------------------------\n")

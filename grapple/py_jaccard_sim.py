@@ -100,7 +100,7 @@ def jaccard_sim(input, out, isol_meta, gene_meta, run_type, sim_metric, isol_fil
         
         # Add in Metadata for genes
         if args.gene_meta:
-            print("Adding Isolate metadata:\n")
+            print("Adding gene metadata:\n")
             metadata_to_layout(genes_out, gene_meta, selection=0, run_type="append", verbose=1)
         else:
             print("No gene metadata provided\n")

@@ -1,0 +1,60 @@
+# simple script to convert a gene presc/absc matrix to binary format
+# removes metadata columns
+
+import csv
+import sys
+
+def file_to_binary(input, output, start_col, delimiter):
+
+    start_col = args.start_col
+    input_file = args.input
+    out_file = args.output
+    delimiter = args.delimiter
+
+    with open(out_file, 'w') as output:
+        writer=csv.writer(output, delimiter = delimiter, lineterminator = '\n')
+        
+        with open(input_file, 'r') as i:
+        
+            tsv_file = csv.reader(i, delimiter = delimiter)
+            
+            # read genomes from header
+            header = next(tsv_file)
+            
+            # rough check if delimiter is correct
+            if len(header)<=1:
+                sys.exit("Input has too few columns, check file and delimiter")
+            
+            # take genomes, add first column (gene/allele name)
+            binary_header = header[start_col:]
+            binary_header.insert(0, header[0])
+            
+            # write genome names as first row to output file
+            writer.writerow(binary_header)
+            
+            for line in tsv_file:
+                # checks for value (making use of pythons blank = False)
+                binary_line = [1 if x else 0 for x in line[start_col:]]
+                
+                # add first col (gene/allele name) at start of line list
+                binary_line.insert(0, line[0])
+                
+                # check to make sure line is the same length as the header
+                if not binary_line.len() == binary_header.len():
+                    sys.exit("Line %s has incorrect number of values" % tsv_file.line_num)
+                
+                # write line to file
+                writer.writerow(binary_line)
+            
+
+if __name__ = "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-i", "--input", type = str, required = True, help = "gene presc/absc file, e.g. from PIRATE, Roary")
+    parser.add_argument("-o", "--output", type = str, required = True, default = "", help = "name for output file")
+    parser.add_argument("--start_col", type = str, required = False, default = "jaccard", help = "start col of individual genome info - e.g. 20 for PIRATE (default), set to 15 for Roary")
+    parser.add_argument("--delimiter", type = str, required = False, default = '\t', help = "set input file delimiter")
+    args = parser.parse_args()
+    
+    jaccard_sim(args.input, args.out, args.isol_meta, args.gene_meta, args.run_type, args.sim_metric, args.isol_filt, args.gene_filt, args.threads)
