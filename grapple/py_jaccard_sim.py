@@ -33,11 +33,11 @@ def jaccard_sim(input, out, isol_meta, gene_meta, run_type, sim_metric, isol_fil
     
     if args.out:
         file_out_prefix = args.out
-        genes_out = f'{file_out_prefix}_genes_jacc_dist_pw.txt'
-        isols_out = f'{file_out_prefix}_isols_jacc_dist_pw.txt'
+        genes_out = f'{file_out_prefix}_genes_pw_sim.txt'
+        isols_out = f'{file_out_prefix}_isols_pw_sim.txt'
     else:
-        isols_out = 'isols_jacc_dist_pw.txt'
-        genes_out = 'genes_jacc_dist_pw.txt'
+        isols_out = 'isols_pw_sim.txt'
+        genes_out = 'genes_pw_sim.txt'
     
     # For Isolate-Isolate Comparison
     
@@ -81,7 +81,7 @@ def jaccard_sim(input, out, isol_meta, gene_meta, run_type, sim_metric, isol_fil
         genes.index = genes['Gene']
         genes = genes.drop(['Gene'], axis = 1)
 
-        genes_jac_dist = pairwise_distances(genes.to_numpy(), metric = sim_metric, n_jobs = 8)
+        genes_jac_dist = pairwise_distances(genes.to_numpy(), metric = sim_metric, n_jobs = args.threads)
         genes_jac_sim = pd.DataFrame((1 - genes_jac_dist), index=genes.index, columns=genes.index)
 
         # convert to pairwise
@@ -112,7 +112,7 @@ if __name__ == "__main__":
     import argparse
     
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--input", type = str, required = True, help = "binary .tsv file of gene presc/absc, e.g. from PIRATE")
+    parser.add_argument("-i", "--input", type = str, required = True, help = "binary tab delimited (.tsv, .Rtab) file of gene presc/absc across pangenome")
     parser.add_argument("-o", "--out", type = str, required = False, default = "", help = "optional prefix for output files")
     parser.add_argument("-m", "--isol_meta", type = str, required = False, help = ".csv isolate metadata")
     parser.add_argument("-g", "--gene_meta", type = str, required = False, help = ".tsv gene metadata, e.g. PIRATE all_alleles.tsv file")
