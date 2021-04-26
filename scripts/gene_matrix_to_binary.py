@@ -8,13 +8,13 @@ import sys
 
 def file_to_binary(input, output, start_col, delimiter):
 
-    start_col = args.start_col
+    start_col = int(args.start_col)
     input_file = args.input
     out_file = args.output
     delimiter = args.delimiter
 
     with open(out_file, 'w') as output:
-        writer=csv.writer(output, delimiter = delimiter, lineterminator = '\n')
+        writer=csv.writer(output, delimiter = '\t', lineterminator = '\n')
         
         with open(input_file, 'r') as i:
         
@@ -42,20 +42,21 @@ def file_to_binary(input, output, start_col, delimiter):
                 binary_line.insert(0, line[0])
                 
                 # check to make sure line is the same length as the header
-                if not binary_line.len() == binary_header.len():
+                if not len(binary_line) == len(binary_header):
                     sys.exit("Line %s has incorrect number of values" % tsv_file.line_num)
                 
                 # write line to file
                 writer.writerow(binary_line)
             
 
-if __name__ = "__main__":
+if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input", type = str, required = True, help = "gene presc/absc file, e.g. from PIRATE, Roary")
-    parser.add_argument("-o", "--output", type = str, required = True, default = "", help = "name for output file")
-    parser.add_argument("--start_col", type = str, required = False, default = "jaccard", help = "start col of individual genome info - e.g. 20 for PIRATE (default), set to 15 for Roary")
+    parser.add_argument("-o", "--output", type = str, required = True, default = "gene_pa_binary.tsv", help = "name for output file")
+    parser.add_argument("--start_col", type = str, required = True, help = "start col of individual genome info - e.g. 20 for PIRATE, 15 for Roary")
     parser.add_argument("--delimiter", type = str, required = False, default = '\t', help = "set input file delimiter")
     args = parser.parse_args()
 
+    file_to_binary(args.input, args.output, args.start_col, args.delimiter)
