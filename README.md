@@ -19,8 +19,8 @@ Currently, each script is run individually, so cloning the repository and runnin
 `git clone https://github.com/JDHarlingLee/GraPPLE`
 
 ## Usage
-#### Pairwise Distances - `pw_similarity.py`
-Calculates the pairwise distances between genomes and/or genes from a binary matrix
+#### Pairwise Similarity - `pw_similarity.py`
+Calculates the pairwise similarity between genomes and/or genes from a binary matrix
 
 Example: `python pw_similarity.py -i binary_presc_absc.tsv -o example1 -r "both" -s "jaccard" -f 0.8 -e 0.8 -t 2`
 
