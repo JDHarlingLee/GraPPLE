@@ -10,9 +10,9 @@ Contact: j.d.harling-lee [at] roslin.ed.ac.uk
 
 ## Dependencies
 * Python 3.6
-   * sklearn.metrics.pairwise
-   * numpy
-   * pandas
+   * [sklearn.metrics](https://scikit-learn.org/stable/install.html)
+   * [numpy](https://numpy.org/install/)
+   * [pandas](https://pandas.pydata.org/pandas-docs/stable/getting_started/install.html)
 
 ## Installation
 Currently, each script is run individually, so cloning the repository and running whichever scripts you need is the simplest usage method.
