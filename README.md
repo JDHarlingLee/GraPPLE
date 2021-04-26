@@ -2,25 +2,65 @@
 
 #### Support scripts for the visualisation of pangenome analyses in Graphia
 
-GraPPLE allows a user to take their bacterial pangenome dataset, calculate similarity matrices between both isolates and genes, and output these in a format suitable for use in the network analysis suite Graphia (https://graphia.app).
+These scripts are provided to help users visualise their bacterial pangenome dataset in the network analysis suite [Graphia](https://graphia.app).
 
-GraPPLE was initially developed to work from the output of PIRATE (https://github.com/SionBayliss/PIRATE), though any gene presc/absc matrix from other suitable tools (Roary, Panaroo, PPanGGOLiN) can be used as input for the pairwise similarity script. See User Guide for more information.
+GraPPLE was initially developed to work with the output of [PIRATE](https://github.com/SionBayliss/PIRATE), though any gene presc/absc matrix from other suitable tools (Roary, Panaroo, PPanGGOLiN) can be used as input for the pairwise similarity script. Currently, synteny graphs from PIRATE and [Panaroo](https://github.com/gtonkinhill/panaroo) are supported (with conversion needed for PIRATE, see below). See also the User Guide for more information.
+
+## Dependencies
+* Python 3.6
+   * sklearn.metrics.pairwise
+   * numpy
+   * pandas
+
+## Installation
+Currently, each script is run individually, so cloning the repository and running whichever scripts you need is the simplest usage method.
+`git clone https://github.com/JDHarlingLee/GraPPLE`
 
 ## Usage
-1. __py_jaccard_sim.py__ | Calculates jaccard similarity between each pair of genomes and each pair of genes
-  * Requires binary, tab separated file input
-  * Optionally include metadata for genomes or genes (can be added later)
+#### Pairwise Distances - `pw_similarity.py`
+Calculates the pairwise distances between genomes and/or genes from a binary matrix
 
-2. __py_edges_to_layout.py__ | Converts PIRATE .edge file to .layout file for load to Graphia
+Example: `python pw_similarity.py -i binary_presc_absc.tsv -o example1 -r "both" -s "jaccard" -f 0.8 -e 0.8 -t 2`
+
+  * Requires the gene presc/absc matrix as a binary, tab separated file (see below for help converting file to binary)
+  * `-r` specifies the run_type, and can be set as "isolates", "genes" or "both".
+  * Optionally include metadata for genomes or genes (these can also be added later)
+
+#### Add Metadata - `metadata_to_layout.py`
+Used to add metadata from a table to a graph in .layout format
+
+Example: `python metadata_to_layout.py -l example1_gene_pw_sim.layout -m gene_info.tsv -s pirate_gene_headers.txt -r "copy"`
+
+  * First column of metadata table must match the names of values in the layout file (the "Node Name")
+  * If using the gene information from the pangenome tool (e.g. all_alleles.tsv from PIRATE), remember to use the `-s` variable to specify which columns to add
+  * `-s` columns should be a list in .txt format, with one column name per row - e.g. the `pirate_gene_headers.txt` file provided in the main GraPPLE folder
+  * Metadata can also be added to a network in Graphia through the GUI, see User Guide
+
+Use `script --help` to see full individual script options.
+
+## PIRATE Specific
+These scripts are specific to users of [PIRATE](https://github.com/SionBayliss/PIRATE).
+
+#### Edges to Layout - `edges_to_layout.py` 
+Converts PIRATE .edge file to .layout file for load to Graphia
+
+Example: `python edges_to_layout.py -e pangenome.edges -o example_graph` 
+
   * Calls py_metadata_to_layout.py to add provided metadata to file
-  * Note default behaviour to group genes as directionality is not currently supported
+  * Note default behaviour is to group genes where they appear twice, as directionality is not currently supported
+  * If you are wanting to investigate the synteny graph at a specific id threshold (e.g. 90%), you may need to recreate the graph file, see below.
  
-3. __py_metadata_to_layout.py__ | Script to add metadata in either .tsv or .csv format to a .layout file for load to Graphia
+#### Edge File at different threshold
+Utilises adapter scripts from PIRATE to recreate the synteny graph at a particular threshold
 
-Use "--help" to see full individual script options.
+Example: `python generate_edges.py -i PIRATE.all_alleles.90.tsv -o synteny-graph-90 -p /path/to/PIRATE/`
+
+  * Requires input of a presc/absc matrix at a single threshold (see Other Scripts)
+  * Requires path to the installation folder of PIRATE (e.g. pip/conda)
+  * This script creates "allelesAsGeneFamilies" files, as it replaces the gene_family field with alleles in the presc/absc matrix
 
 ## Other Scripts
-Provided in the 'scripts' folder are some other useful scripts for compatability between tools, such as a script to create a simple binary file from pangenome tool ouputs.
+Provided in the 'scripts' folder are some other useful scripts, including a general script for subsetting PIRATE output files (post_pirate_processing.sh), and a script to create a simple binary file from pangenome tool ouputs (gene_matrix_to_binary.py). Again, use `script -h` to see options available.
 
 ## Acknowledgements
 These scripts were initially developed from PIRATE outputs, and we thank Sion Bayliss for his advice and useful discussions.
