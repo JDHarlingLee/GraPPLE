@@ -1,8 +1,8 @@
 #!/usr/bin/bash
 
 # Author: JDHL
-# Basic runner script for adapting PIRATE output for use in GrapPLE/Graphia
-# Recreates some files, and splits out files by threshold for calculation of Jaccard Similarity
+# Basic runner script for adapting the general PIRATE output for use in GraPPLE/Graphia
+# Recreates some files, and splits out files by identity threshold
 # Can include paralogs or not (default)
 # Heavily relies on PIRATE's excellent adapter scripts, provided in the PIRATE repository
 # Please see SionBayliss/PIRATE for more information on these
@@ -10,30 +10,32 @@
 # read variables
 while [ "$1" != "" ]; do
         case $1 in
-                -t | --thr_list )	    shift
-										thr_list=$1
+                -t | --thr_list )	shift
+					thr_list=$1
                                         ;;
-                -p | --paralogs )		shift
-										paralogs=1
-										;;
-				-d | --paralog_dir )	shift
-										paralog_dir=$1
-										;;
-				-q | --path )			shift
-										path=$1
-										;;
-				-n | --threads )		shift
-										threads=$1
-										;;
-				-h | --help )           printf "\n------------------------------------------------\n"
-										printf "\nEnsure you are executing this script within the output directory of your pangenome analysis\n"
-										printf "\n-t | threshold list (those used in PIRATE run, or subset thereof"
-										printf "\n-p | include paralogs or not. Default: off"
-										printf "\n-d | paralog_directory name - new files are created to avoid overwriting originals"
-										printf "\n-q | path to PIRATE directory - necessary for using PIRATE adapter scripts"
-										printf "\n-n | number of threads to use\n"
-										printf "\n------------------------------------------------\n"
-										exit 0
+	        -p | --paralogs )	shift
+					paralogs=1
+					;;
+		-d | --paralog_dir )	shift
+					paralog_dir=$1
+					;;
+		-q | --path )		shift
+					path=$1
+					;;
+		-n | --threads )	shift
+					threads=$1
+					;;
+		-h | --help )           printf "\n------------------------------------------------\n"
+					printf "\nThis is a script to adapt the standard output from PIRATE for use in GraPPLE/Graphia"
+					printf "\nYou may prefer to run some of these actions individually, but this is a wrapper script for convenience\n"
+					printf "\nEnsure you are executing this script within the output directory of your pangenome analysis\n"
+					printf "\n-t | threshold list (those used in PIRATE run, or a subset thereof)"
+					printf "\n-p | include paralogs or not. Default: off"
+					printf "\n-d | paralog_directory name - new files are created to avoid overwriting originals"
+					printf "\n-q | path to PIRATE directory - necessary for using PIRATE adapter scripts"
+					printf "\n-n | number of threads to use\n"
+					printf "\n------------------------------------------------\n"
+					exit 0
                                         ;;
                 * )                     printf "\nUse -h | --help"
                                         exit 1

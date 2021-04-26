@@ -1,4 +1,6 @@
-# simple script to convert a gene presc/absc matrix to binary format
+#!/usr/bin/env python
+
+# simple script to convert a generic gene presc/absc matrix to binary format
 # removes metadata columns
 
 import csv
@@ -56,5 +58,4 @@ if __name__ = "__main__":
     parser.add_argument("--start_col", type = str, required = False, default = "jaccard", help = "start col of individual genome info - e.g. 20 for PIRATE (default), set to 15 for Roary")
     parser.add_argument("--delimiter", type = str, required = False, default = '\t', help = "set input file delimiter")
     args = parser.parse_args()
-    
-    jaccard_sim(args.input, args.out, args.isol_meta, args.gene_meta, args.run_type, args.sim_metric, args.isol_filt, args.gene_filt, args.threads)
+
