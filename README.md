@@ -2,9 +2,11 @@
 
 #### Support scripts for the visualisation of pangenome analyses in Graphia
 
-These scripts are provided to help users visualise their bacterial pangenome dataset in the network analysis suite [Graphia](https://graphia.app).
+These scripts are provided to help users visualise their bacterial pangenome dataset in the network analysis suite [Graphia](https://graphia.app). At present, they should be considered as in beta, so please check your outputs make sense, and raise any issues or bugs.
 
 GraPPLE was initially developed to work with the output of [PIRATE](https://github.com/SionBayliss/PIRATE), though any gene presc/absc matrix from other suitable tools (Roary, Panaroo, PPanGGOLiN) can be used as input for the pairwise similarity script. Currently, synteny graphs from PIRATE and [Panaroo](https://github.com/gtonkinhill/panaroo) are supported (with conversion needed for PIRATE, see below). See also the User Guide for more information.
+
+Contact: j.d.harling-lee [at] roslin.ed.ac.uk
 
 ## Dependencies
 * Python 3.6
