@@ -4,7 +4,7 @@ import subprocess
 from pathlib import Path
 import os
 
-def generate_edges (input, output_dir, pirate_path, threads):
+def generate_edges (input, output_dir, pirate_path):
 
     # Set output file paths
     out_file=os.path.splitext(args.input)[0]
@@ -41,10 +41,9 @@ def generate_edges (input, output_dir, pirate_path, threads):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--input", type = str, required = True, help = "Input file - e.g. PIRATE.all_alleles.wp.90.tsv")
+    parser.add_argument("-i", "--input", type = str, required = True, help = "Input file with single id threshold - e.g. PIRATE.all_alleles.wp.90.tsv")
     parser.add_argument("-o", "--output_dir", type = Path, required = False, default = "pangenome_maps", help = "Output directory name")
-    parser.add_argument("-p", "--pirate_path", type = Path, required = True, help = "Path to PIRATE folder")
-    parser.add_argument("-n", "--threads", type = int, required = False, default = 2, help = "Number of threads to use")
+    parser.add_argument("-p", "--pirate_path", type = Path, required = True, help = "path to PIRATE scripts")
     args = parser.parse_args()
 
-    generate_edges(args.input, args.output_dir, args.pirate_path, args.threads)
+    generate_edges(args.input, args.output_dir, args.pirate_path)
