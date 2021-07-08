@@ -2,6 +2,8 @@
 
 #### Support scripts for the visualisation of pangenome analyses in Graphia
 
+![saureus_pangenome_structure_2D_smaller](https://user-images.githubusercontent.com/43573509/118498191-ab408900-b71d-11eb-8e1a-1462f00a7206.png)
+
 These scripts are provided to help users visualise their bacterial pangenome dataset in the network analysis suite [Graphia](https://graphia.app). At present, they should be considered as in beta, so please check your outputs make sense, and raise any issues or bugs.
 
 GraPPLE was initially developed to work with the output of [PIRATE](https://github.com/SionBayliss/PIRATE), though any gene presc/absc matrix from other suitable tools (Roary, Panaroo, PPanGGOLiN) can be used as input for the pairwise similarity script. Currently, synteny graphs from PIRATE and [Panaroo](https://github.com/gtonkinhill/panaroo) are supported (with conversion needed for PIRATE, see below). See also the User Guide for more information.
@@ -19,8 +21,8 @@ Currently, each script is run individually, so cloning the repository and runnin
 `git clone https://github.com/JDHarlingLee/GraPPLE`
 
 ## Usage
-#### Pairwise Distances - `pw_similarity.py`
-Calculates the pairwise distances between genomes and/or genes from a binary matrix
+#### Pairwise Similarity - `pw_similarity.py`
+Calculates the pairwise similarity between genomes and/or genes from a binary matrix
 
 Example: `python pw_similarity.py -i binary_presc_absc.tsv -o example1 -r "both" -s "jaccard" -f 0.8 -e 0.8 -t 2`
 
@@ -68,3 +70,4 @@ Provided in the 'scripts' folder are some other useful scripts, including a gene
 These scripts were initially developed from PIRATE outputs, and we thank Sion Bayliss for his advice and useful discussions.
 
 ## Citation
+Pre-print coming soon!
