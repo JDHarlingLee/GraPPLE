@@ -6,7 +6,7 @@
 
 These scripts are provided to help users visualise their bacterial pangenome dataset in the network analysis suite [Graphia](https://graphia.app). At present, they should be considered as in beta, so please check your outputs make sense, and raise any issues or bugs.
 
-GraPPLE was initially developed to work with the output of [PIRATE](https://github.com/SionBayliss/PIRATE), though any gene presc/absc matrix from other suitable tools (Roary, Panaroo, PPanGGOLiN) can be used as input for the pairwise similarity script. Currently, synteny graphs from PIRATE and [Panaroo](https://github.com/gtonkinhill/panaroo) are supported (with conversion needed for PIRATE, see below). See also the User Guide for more information.
+GraPPLE was initially developed to work with the output of [PIRATE](https://github.com/SionBayliss/PIRATE), though any gene presc/absc matrix from other suitable tools (Roary, Panaroo, PPanGGOLiN etc.) can be used as input for the pairwise similarity script. Currently, synteny graphs from PIRATE and [Panaroo](https://github.com/gtonkinhill/panaroo) are supported (with conversion needed for PIRATE, see below).
 
 Contact: j.d.harling-lee [at] roslin.ed.ac.uk
 
@@ -40,7 +40,7 @@ Example: `python metadata_to_layout.py -l example1_gene_pw_sim.layout -m gene_in
   * `-s` columns should be a list in .txt format, with one column name per row - e.g. the `pirate_gene_headers.txt` file provided in the main GraPPLE folder
   * Metadata can also be added to a network in Graphia through the GUI, see User Guide
 
-Use `script --help` to see full individual script options.
+Use `[script] --help` to see full individual script options.
 
 ## PIRATE Specific
 These scripts are specific to users of [PIRATE](https://github.com/SionBayliss/PIRATE).
@@ -57,17 +57,28 @@ Example: `python edges_to_layout.py -e pangenome.edges -o example_graph`
 #### Edge File at different threshold
 Utilises adapter scripts from PIRATE to recreate the synteny graph at a particular threshold
 
-Example: `python generate_edges.py -i PIRATE.all_alleles.90.tsv -o synteny-graph-90 -p /path/to/PIRATE/`
+Example: `python generate_edges.sh -i PIRATE.all_alleles.90.tsv -o synteny-graph-90 -p /path/to/PIRATE/`
 
   * Requires input of a presc/absc matrix at a single threshold (see Other Scripts)
   * Requires path to the installation folder of PIRATE (e.g. pip/conda)
   * This script creates "allelesAsGeneFamilies" files, as it replaces the gene_family field with alleles in the presc/absc matrix
 
 ## Other Scripts
-Provided in the 'scripts' folder are some other useful scripts, including a general script for subsetting PIRATE output files (post_pirate_processing.sh), and a script to create a simple binary file from pangenome tool ouputs (gene_matrix_to_binary.py). Again, use `script -h` to see options available.
+Provided in the 'scripts' folder are some other useful scripts, including a general script for subsetting PIRATE output files (post_pirate_processing.sh), and a script to create a simple binary file from pangenome tool ouputs (gene_matrix_to_binary.py). Again, use `[script] -h` to see options available.
+
+#### Gene Profile Plots - `plot_gene_cluster_profiles.R`
+Plots the gene presc/absc profiles of a range of clusters, or a specific set of clusters, with relative metadata for inspection of associations and gene presc/absc patterns. Requires a binary gene presc/absc matrix (.tsv), a list of genes and their clusters (.csv; exported from Graphia) and isolate metadata (.csv; recommended to keep to 3 or fewer categories).
+
+  * `-N` specifies the number of metadata groupings to use - this is defaults and is limited to 11, to avoid over-colouring/complicating the plots. Provide either a single number for all, or a comma separated list (e.g. "5,10,3") to specify for each column in the isolate metadata file
+  * `-l` to give a list of clusters to specifically plot. Provide as a comma separated list (e.g. "1,2,5,10")
+  * `-p` to give colour (or list of colours) for gene cluster profile - name or hex code
+  * `-s` & `-e` to give start and end cluster numbers (instead of `-l`) - this will plot all clusters between these two numbers
+
+Example: `Rscript plot_gene_cluster_profiles.R -g gene_presc_absc_binary.tsv -c gene_clusters_mcli150.csv -m isolate_metadata.csv -o gene_cluster_plots/ -l "1,2,3,4" -N "4,10" -p "blue"`
+
 
 ## Acknowledgements
-These scripts were initially developed from PIRATE outputs, and we thank Sion Bayliss for his advice and useful discussions.
+Many of these scripts were initially developed from PIRATE outputs, and some make use of the excellent adapter scripts from the PIRATE repository. We also thank Sion Bayliss for his advice and useful discussions.
 
 ## Citation
 Pre-print coming soon!
