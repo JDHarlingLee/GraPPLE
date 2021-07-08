@@ -67,7 +67,7 @@ Example: `python generate_edges.sh -i PIRATE.all_alleles.90.tsv -o synteny-graph
 Provided in the 'scripts' folder are some other useful scripts, including a general script for subsetting PIRATE output files (post_pirate_processing.sh), and a script to create a simple binary file from pangenome tool ouputs (gene_matrix_to_binary.py). Again, use `[script] -h` to see options available.
 
 #### Gene Profile Plots - `plot_gene_cluster_profiles.R`
-Plots the gene presc/absc profiles of a range of clusters, or a specific set of clusters, with relative metadata for inspection of associations and gene presc/absc patterns. Requires a binary gene presc/absc matrix (.tsv), a list of genes and their clusters (.csv; exported from Graphia) and isolate metadata (.csv; recommended to keep to 3 or fewer categories).
+Plots the gene presc/absc profiles of a range of clusters, or a specific set of clusters, with relative metadata for inspection of associations and gene presc/absc patterns. Requires a binary gene presc/absc matrix (`-g` as .tsv), a list of genes and their clusters (`-c` as .csv; exported from Graphia) and isolate metadata (`-m` as .csv; recommended to keep to 3 or fewer categories).
 
   * `-N` specifies the number of metadata groupings to use - this is defaults and is limited to 11, to avoid over-colouring/complicating the plots. Provide either a single number for all, or a comma separated list (e.g. "5,10,3") to specify for each column in the isolate metadata file
   * `-l` to give a list of clusters to specifically plot. Provide as a comma separated list (e.g. "1,2,5,10")
@@ -76,6 +76,11 @@ Plots the gene presc/absc profiles of a range of clusters, or a specific set of 
 
 Example: `Rscript plot_gene_cluster_profiles.R -g gene_presc_absc_binary.tsv -c gene_clusters_mcli150.csv -m isolate_metadata.csv -o gene_cluster_plots/ -l "1,2,3,4" -N "4,10" -p "blue"`
 
+Tested in R v3.6.3. Requires:
+  * dplyr
+  * ggplot2
+  * cowplot
+  * optparse
 
 ## Acknowledgements
 Many of these scripts were initially developed from PIRATE outputs, and some make use of the excellent adapter scripts from the PIRATE repository. We also thank Sion Bayliss for his advice and useful discussions.
