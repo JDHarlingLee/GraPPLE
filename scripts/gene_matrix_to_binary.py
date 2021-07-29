@@ -56,7 +56,7 @@ if __name__ == "__main__":
     parser.add_argument("-i", "--input", type = str, required = True, help = "gene presc/absc file, e.g. from PIRATE, Roary")
     parser.add_argument("-o", "--output", type = str, required = True, default = "gene_pa_binary.tsv", help = "name for output file")
     parser.add_argument("--start_col", type = str, required = True, help = "start col of individual genome info - e.g. 20 for PIRATE, 15 for Roary")
-    parser.add_argument("--delimiter", type = str, required = False, default = '\t', help = "set input file delimiter")
+    parser.add_argument("--delimiter", type = str, required = False, default = '\t', help = "set input file delimiter (assumes tab by default)")
     args = parser.parse_args()
 
     file_to_binary(args.input, args.output, args.start_col, args.delimiter)

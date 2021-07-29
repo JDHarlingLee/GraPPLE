@@ -87,8 +87,8 @@ def pw_sim(input, out, isol_meta, gene_meta, run_type, sim_metric, isol_filt, ge
         print("\n-----------------------------------------------\n")
         print("Calculating pairwise distance between genes...\n")
         genes = data
-        genes.index = genes['Gene']
-        genes = genes.drop(['Gene'], axis = 1)
+        genes.index = genes[col_names[0]]
+        genes = genes.drop([col_names[0]], axis = 1)
 
         genes_jac_dist = pairwise_distances(genes.to_numpy(), metric = sim_metric, n_jobs = args.threads)
         genes_jac_sim = pd.DataFrame((1 - genes_jac_dist), index=genes.index, columns=genes.index)

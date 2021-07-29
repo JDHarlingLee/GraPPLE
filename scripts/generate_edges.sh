@@ -54,6 +54,7 @@ if test -z "$output_folder"; then
 		exit 1
 	fi
 fi
+mkdir $output_folder
 
 if test -z "$path"; then
     printf "\nERROR: No path to PIRATE provided"

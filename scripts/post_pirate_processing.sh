@@ -30,7 +30,7 @@ while [ "$1" != "" ]; do
 					printf "\nYou may prefer to run some of these actions individually, but this is a wrapper script for convenience\n"
 					printf "\nEnsure you are executing this script within the output directory of your pangenome analysis\n"
 					printf "\n-t | threshold list (those used in PIRATE run, or a subset thereof)"
-					printf "\n-p | include paralogs or not. Default: off"
+					printf "\n-p | include paralogs or not (1 = yes, 0 = no). Default: no"
 					printf "\n-d | paralog_directory name - new files are created to avoid overwriting originals"
 					printf "\n-q | path to PIRATE directory - necessary for using PIRATE adapter scripts"
 					printf "\n-n | number of threads to use\n"
@@ -109,6 +109,7 @@ if [[ $paralogs -eq 1 ]]; then
 		mkdir ${paralog_dir}/
 		${path}/scripts/link_clusters_runner.pl -l ./loci_list.tab -l ./split_paralog_loci.tab -t $thr_list -o ./${paralog_dir}/ -c ./co-ords/ --paralogs ./loci_paralog_categories.tab -e ./paralog_clusters.tab --parallel $threads --all-alleles
 		mv ${paralog_dir}/PIRATE.all_alleles.tsv ./PIRATE.all_alleles.wp.tsv
+        fi
 else
 	wp=""
 fi
