@@ -30,12 +30,12 @@ def pw_sim(input, out, isol_meta, gene_meta, run_type, sim_metric, isol_filt, ge
     try:
     	data = pd.read_csv(args.input, sep = '\t', dtype=types_dict)
     except ValueError:
-	print("Error with input file type. Check file is binary matrix") 
+    	print("Error with input file type. Check file is binary matrix")
     except:
-	print("Error when trying to read input file")
+    	print("Error when trying to read input file")
     else:
-	data = pd.read_csv(args.input, sep = '\t', dtype=types_dict)
-
+    	data = pd.read_csv(args.input, sep = '\t', dtype=types_dict)
+    
     data.columns = data.columns.str.replace('.gff$', '') # removes .gff from end of isolate names (e.g. from PPanGGoLIN ouputs) - comment out if necessary
     
     # Set file names for write out
