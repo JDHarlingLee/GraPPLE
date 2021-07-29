@@ -24,10 +24,18 @@ def pw_sim(input, out, isol_meta, gene_meta, run_type, sim_metric, isol_filt, ge
     # specifies data types for import; first column string (gene names), all others bool for similarity calc
     
     col_names = pd.read_csv(args.input, nrows=0, sep = '\t').columns
-    types_dict = {'Gene': str}
-    types_dict.update({col: bool for col in col_names if col not in types_dict})
+    types_dict = {col_names[0]: str} # assumes first column is gene/allele names
+    types_dict.update({col: bool for col in col_names if col not in types_dict}) # all other columns types set to boolean (requires binary 0/1 input)
     
-    data = pd.read_csv(args.input, sep = '\t', dtype=types_dict)
+    try:
+    	data = pd.read_csv(args.input, sep = '\t', dtype=types_dict)
+    except ValueError:
+	print("Error with input file type. Check file is binary matrix") 
+    except:
+	print("Error when trying to read input file")
+    else:
+	data = pd.read_csv(args.input, sep = '\t', dtype=types_dict)
+
     data.columns = data.columns.str.replace('.gff$', '') # removes .gff from end of isolate names (e.g. from PPanGGoLIN ouputs) - comment out if necessary
     
     # Set file names for write out
