@@ -91,20 +91,21 @@ else
 	$path/scripts/link_clusters_runner.pl -l ./loci_list.tab -t $thr_list -o ./ -c ./co-ords/ -parallel $threads --all-alleles
 fi
 
-# 2. Recreate split_paralogs_loci.tab
 
-if test -f ./split_paralog_loci.tab; then
-	echo "split_paralogs_loci.tab exists"
-else 
-	$path/scripts/split_paralogs_runner.pl -p ./loci_paralog_categories.tab -l ./loci_list.tab -o ./ -t $threads
-fi
-
-# 3. Create paralog files
+# 2. Create paralog files
 
 if [[ $paralogs -eq 1 ]]; then
+	# Recreate split_paralogs_loci.tab if necessary
+	if test -f ./split_paralog_loci.tab; then
+		echo "split_paralogs_loci.tab exists"
+	else 
+		$path/scripts/split_paralogs_runner.pl -p ./loci_paralog_categories.tab -l ./loci_list.tab -o ./ -t $threads
+	fi
+	
 	wp="wp."
-	if test -f ./PIRATE.all_alleles.tsv; then
-		echo "./PIRATE.all_alleles.tsv exists. Will use this"
+	
+	if test -f ./PIRATE.all_alleles.wp.tsv; then
+		echo "PIRATE.all_alleles.wp.tsv already exists"
 	else
 		mkdir ${paralog_dir}/
 		${path}/scripts/link_clusters_runner.pl -l ./loci_list.tab -l ./split_paralog_loci.tab -t $thr_list -o ./${paralog_dir}/ -c ./co-ords/ --paralogs ./loci_paralog_categories.tab -e ./paralog_clusters.tab --parallel $threads --all-alleles
@@ -114,43 +115,27 @@ else
 	wp=""
 fi
 
-# 4. Split all_alleles by thresholds
+# 3. Split all_alleles by thresholds
 
 if test -z $high; then
-	high=$(cut -f7 ./PIRATE.all_alleles.tsv | sort -n | tail -1)
+	# if not set, uses highest value to remove core genes (reduces data size for subsequent analyses) 
+	high=$(cut -f7 ./PIRATE.all_alleles.${wp}tsv | sort -n | tail -1)
 fi
 
 if test -z $low; then
-	low=$(cut -f7 ./PIRATE.all_alleles.tsv | sort -n | head -2 | tail -1)
+	# if not set, defaults to 1, to remove singleton genes (reduces data size for subsequent analyses)
+	low=1
 fi
 
 for i in ${thr_list//,/ }
 do
-	awk -F"\t" -v thr=$i -v max=$high -v min=$low 'NR==1 {print $0}; $5==thr && $7<max && $7>min {print $0}' PIRATE.all_alleles.${wp}tsv > PIRATE.acc_alleles.${i}.${wp}tsv 
+	awk -F"\t" -v thr=$i -v max=$high -v min=$low 'NR==1 {print $0}; $5==thr && $7<max && $7>min {print $0}' PIRATE.all_alleles.${wp}tsv > PIRATE.acc_alleles.${i}.${wp}genes_${low}-${high}.tsv 
 done
 
-# 5. Convert PIRATE files to binary format
+# 4. Convert PIRATE files to binary format (necessary for pw_similarity.py)
 
 for i in ${thr_list//,/ }
 do
-	$path/tools/convert_format/PIRATE_to_Rtab.pl -i ./PIRATE.acc_alleles.${i}.${wp}tsv -o ./PIRATE.acc_alleles.${i}.${wp}binary.tsv --low 0 --high 1 
+	$path/tools/convert_format/PIRATE_to_Rtab.pl -i ./PIRATE.acc_alleles.${i}.${wp}genes_${low}-${high}.tsv -o ./PIRATE.acc_alleles.${i}.${wp}genes_${low}-${high}.binary.tsv --low 0 --high 1 
 done
-
-# 6. Return file names (for __main__.py)
-
-declare -a files
-for i in ${thr_list//,/ }
-do
-	files+=(PIRATE.acc_alleles.${i}.${wp}tsv)
-	files+=(PIRATE.acc_alleles.${i}.${wp}binary.tsv)
-done
-
-echo "${files[@]}"
-
-
-
-
-
-
-
 
