@@ -33,7 +33,7 @@ while [ "$1" != "" ]; do
 					printf "\n-p | include paralogs or not (1 = yes, 0 = no). Default: no"
 					printf "\n-d | GraPPLE analysis directory name - a directory where new files can be created to avoid overwriting originals. Default: GraPPLE"
 					printf "\n-q | path to PIRATE directory - necessary for using PIRATE adapter scripts"
-					printf "\n-n | number of threads to use\n"
+					printf "\n-n | number of threads to use. Default: 2\n"
 					printf "\n------------------------------------------------\n"
 					exit 0
                                         ;;
