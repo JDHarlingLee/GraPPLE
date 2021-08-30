@@ -62,14 +62,13 @@ if test -z "$threads"; then
         threads=2
 fi
 
-if [[ $paralogs -eq 1 ]]; then
-	if test -z "$grapple_dir"; then
-		grapple_dir="GraPPLE"
-	fi
-	if test -d "$grapple_dir"; then
-		echo "ERROR: GraPPLE analysis directory (${grapple_dir}) already exists. Please choose a different directory name. Exiting to avoid overwriting previous data"
-		exit 1
-	fi
+if test -z "$grapple_dir"; then
+	grapple_dir="GraPPLE"
+fi
+
+if test -d "$grapple_dir"; then
+	echo "ERROR: GraPPLE analysis directory (${grapple_dir}) already exists. Please choose a different directory name. Exiting to avoid overwriting previous data"
+	exit 1
 fi
 
 
@@ -83,18 +82,7 @@ fi
 #exit 0
 
 
-# 1. Recreate PIRATE.all_alleles.tsv
-
-if test -f ./PIRATE.all_alleles.tsv; then
-	echo "PIRATE.all_alleles.tsv already exists"
-else 
-	mkdir ${grapple_dir}/
-	$path/scripts/link_clusters_runner.pl -l ./loci_list.tab -t $thr_list -o ./${grapple_dir}/ -c ./co-ords/ -parallel $threads --all-alleles
-	mv ${grapple_dir}/PIRATE.all_alleles.tsv ./PIRATE.all_alleles.tsv
-fi
-
-
-# 2. Create paralog files
+# 1. Create paralog files and PIRATE.all_alleles.tsv (if not already present)
 
 if [[ $paralogs -eq 1 ]]; then
 	# Recreate split_paralogs_loci.tab if necessary
@@ -115,9 +103,16 @@ if [[ $paralogs -eq 1 ]]; then
         fi
 else
 	wp=""
+	if test -f ./PIRATE.all_alleles.tsv; then
+		echo "PIRATE.all_alleles.tsv already exists"
+	else
+		mkdir ${grapple_dir}/
+		$path/scripts/link_clusters_runner.pl -l ./loci_list.tab -t $thr_list -o ./${grapple_dir}/ -c ./co-ords/ -parallel $threads --all-alleles
+		mv ${grapple_dir}/PIRATE.all_alleles.tsv ./PIRATE.all_alleles.tsv
+	fi
 fi
 
-# 3. Split all_alleles by thresholds
+# 2. Split all_alleles by thresholds
 
 if test -z $high; then
 	# if not set, uses highest value to remove core genes (reduces data size for subsequent analyses) 
@@ -134,7 +129,7 @@ do
 	awk -F"\t" -v thr=$i -v max=$high -v min=$low 'NR==1 {print $0}; $5==thr && $7<max && $7>min {print $0}' PIRATE.all_alleles.${wp}tsv > PIRATE.acc_alleles.${i}.${wp}genes_${low}-${high}.tsv 
 done
 
-# 4. Convert PIRATE files to binary format (necessary for pw_similarity.py)
+# 3. Convert PIRATE files to binary format (necessary for pw_similarity.py)
 
 for i in ${thr_list//,/ }
 do
