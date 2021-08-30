@@ -16,8 +16,8 @@ while [ "$1" != "" ]; do
 	        -p | --paralogs )	shift
 					paralogs=1
 					;;
-		-d | --paralog_dir )	shift
-					paralog_dir=$1
+		-d | --grapple_dir )	shift
+					grapple_dir=$1
 					;;
 		-q | --path )		shift
 					path=$1
@@ -31,7 +31,7 @@ while [ "$1" != "" ]; do
 					printf "\nEnsure you are executing this script within the output directory of your pangenome analysis\n"
 					printf "\n-t | threshold list (those used in PIRATE run, or a subset thereof)"
 					printf "\n-p | include paralogs or not (1 = yes, 0 = no). Default: no"
-					printf "\n-d | paralog_directory name - new files are created to avoid overwriting originals"
+					printf "\n-d | GraPPLE analysis directory name - a directory where new files can be created to avoid overwriting originals. Default: GraPPLE"
 					printf "\n-q | path to PIRATE directory - necessary for using PIRATE adapter scripts"
 					printf "\n-n | number of threads to use\n"
 					printf "\n------------------------------------------------\n"
@@ -63,11 +63,11 @@ if test -z "$threads"; then
 fi
 
 if [[ $paralogs -eq 1 ]]; then
-	if test -z "$paralog_dir"; then
-		paralog_dir="with-paralogs"
+	if test -z "$grapple_dir"; then
+		grapple_dir="GraPPLE"
 	fi
-	if test -d "$paralog_dir"; then
-		echo "ERROR: paralog output directory already exists. Please choose a different directory name. Exiting to avoid overwriting previous data"
+	if test -d "$grapple_dir"; then
+		echo "ERROR: GraPPLE analysis directory (${grapple_dir}) already exists. Please choose a different directory name. Exiting to avoid overwriting previous data"
 		exit 1
 	fi
 fi
@@ -78,7 +78,7 @@ fi
 #echo $paralogs
 #echo $path
 #echo $threads
-#echo $paralog_dir
+#echo $grapple_dir
 #echo "high and low set later in script"
 #exit 0
 
@@ -88,7 +88,9 @@ fi
 if test -f ./PIRATE.all_alleles.tsv; then
 	echo "PIRATE.all_alleles.tsv already exists"
 else 
-	$path/scripts/link_clusters_runner.pl -l ./loci_list.tab -t $thr_list -o ./ -c ./co-ords/ -parallel $threads --all-alleles
+	mkdir ${grapple_dir}/
+	$path/scripts/link_clusters_runner.pl -l ./loci_list.tab -t $thr_list -o ./${grapple_dir}/ -c ./co-ords/ -parallel $threads --all-alleles
+	mv ${grapple_dir}/PIRATE.all_alleles.tsv ./PIRATE.all_alleles.tsv
 fi
 
 
@@ -107,9 +109,9 @@ if [[ $paralogs -eq 1 ]]; then
 	if test -f ./PIRATE.all_alleles.wp.tsv; then
 		echo "PIRATE.all_alleles.wp.tsv already exists"
 	else
-		mkdir ${paralog_dir}/
-		${path}/scripts/link_clusters_runner.pl -l ./loci_list.tab -l ./split_paralog_loci.tab -t $thr_list -o ./${paralog_dir}/ -c ./co-ords/ --paralogs ./loci_paralog_categories.tab -e ./paralog_clusters.tab --parallel $threads --all-alleles
-		mv ${paralog_dir}/PIRATE.all_alleles.tsv ./PIRATE.all_alleles.wp.tsv
+		mkdir ${grapple_dir}/
+		${path}/scripts/link_clusters_runner.pl -l ./loci_list.tab -l ./split_paralog_loci.tab -t $thr_list -o ./${grapple_dir}/ -c ./co-ords/ --paralogs ./loci_paralog_categories.tab -e ./paralog_clusters.tab --parallel $threads --all-alleles
+		mv ${grapple_dir}/PIRATE.all_alleles.tsv ./PIRATE.all_alleles.wp.tsv
         fi
 else
 	wp=""
