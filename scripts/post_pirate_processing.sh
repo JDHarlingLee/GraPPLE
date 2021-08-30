@@ -31,7 +31,7 @@ while [ "$1" != "" ]; do
 					printf "\nEnsure you are executing this script within the output directory of your pangenome analysis\n"
 					printf "\n-t | threshold list (those used in PIRATE run, or a subset thereof)"
 					printf "\n-p | include paralogs or not (1 = yes, 0 = no). Default: no"
-					printf "\n-d | GraPPLE analysis directory name - a directory where new files can be created to avoid overwriting originals. Default: GraPPLE"
+					printf "\n-d | analysis directory name - a directory where new files can be created to avoid overwriting originals. Default: GraPPLE"
 					printf "\n-q | path to PIRATE directory - necessary for using PIRATE adapter scripts"
 					printf "\n-n | number of threads to use. Default: 2\n"
 					printf "\n------------------------------------------------\n"
@@ -67,7 +67,7 @@ if test -z "$grapple_dir"; then
 fi
 
 if test -d "$grapple_dir"; then
-	echo "ERROR: GraPPLE analysis directory (${grapple_dir}) already exists. Please choose a different directory name. Exiting to avoid overwriting previous data"
+	echo "ERROR: Directory ${grapple_dir} already exists. Please choose a different directory name. Exiting to avoid overwriting previous data"
 	exit 1
 fi
 
