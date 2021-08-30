@@ -53,8 +53,8 @@ if test -z "$paralogs"; then
 		paralogs=0
 fi
 
-if test -z "$path"; then
-        echo "ERROR: No path to PIRATE provided"
+if ! test -e "$path" || ! test -f $path/scripts/link_clusters_runner.pl || ! test -f $path/scripts/split_paralogs_runner.pl || ! test -f $path/tools/convert_format/PIRATE_to_Rtab.pl ; then
+        echo "ERROR: Valid path to PIRATE not provided or is missing necessary adapter scripts"
         exit 1
 fi
 

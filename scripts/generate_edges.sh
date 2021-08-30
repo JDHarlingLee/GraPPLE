@@ -56,8 +56,8 @@ if test -z "$output_folder"; then
 fi
 mkdir $output_folder
 
-if test -z "$path"; then
-    printf "\nERROR: No path to PIRATE provided"
+if ! test -e "$path" || ! test -f $path/scripts/pangenome_graph.pl ; then
+    printf "\nERROR: Valid path to PIRATE not provided or is missing necessary pangenome_graph.pl script"
     exit 1
 fi
 
