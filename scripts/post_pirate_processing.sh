@@ -124,15 +124,19 @@ if test -z $low; then
 	low=1
 fi
 
+kept_high=$((high-1)) # for output file name
+kept_low=$((low+1)) # for output file name
+
+
 for i in ${thr_list//,/ }
 do
-	awk -F"\t" -v thr=$i -v max=$high -v min=$low 'NR==1 {print $0}; $5==thr && $7<max && $7>min {print $0}' PIRATE.all_alleles.${wp}tsv > PIRATE.acc_alleles.${i}.${wp}genes_${low}-${high}.tsv 
+	awk -F"\t" -v thr=$i -v max=$high -v min=$low 'NR==1 {print $0}; $5==thr && $7<max && $7>min {print $0}' PIRATE.all_alleles.${wp}tsv > PIRATE.acc_alleles.${i}.${wp}genes_${kept_low}-${kept_high}.tsv 
 done
 
 # 3. Convert PIRATE files to binary format (necessary for pw_similarity.py)
 
 for i in ${thr_list//,/ }
 do
-	$path/tools/convert_format/PIRATE_to_Rtab.pl -i ./PIRATE.acc_alleles.${i}.${wp}genes_${low}-${high}.tsv -o ./PIRATE.acc_alleles.${i}.${wp}genes_${low}-${high}.binary.tsv --low 0 --high 1 
+	$path/tools/convert_format/PIRATE_to_Rtab.pl -i ./PIRATE.acc_alleles.${i}.${wp}genes_${kept_low}-${kept_high}.tsv -o ./PIRATE.acc_alleles.${i}.${wp}genes_${kept_low}-${kept_high}.binary.tsv --low 0 --high 1 
 done
 
