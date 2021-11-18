@@ -11,7 +11,7 @@ from metadata_to_layout import metadata_to_layout
 
 # Parse Arguments
 
-def pw_sim(input, out, isol_meta, gene_meta, run_type, sim_metric, isol_filt, gene_filt, threads):
+def pw_sim(input, out, isol_meta, gene_meta, run_type, sim_metric, isol_filt, gene_filt, threads, output_matrix):
     
     # Specify run type
     # This set-up was used to avoid reading large files into memory twice if calculating both isolate and gene sim together
@@ -44,9 +44,13 @@ def pw_sim(input, out, isol_meta, gene_meta, run_type, sim_metric, isol_filt, ge
         file_out_prefix = args.out
         genes_out = f'{file_out_prefix}_genes_pw_sim.layout'
         isols_out = f'{file_out_prefix}_isols_pw_sim.layout'
+        isols_matrix_out = f'{file_out_prefix}_isols_matrix.tsv'
+        genes_matrix_out = f'{file_out_prefix}_genes_matrix.tsv'
     else:
         isols_out = 'isols_pw_sim.layout'
         genes_out = 'genes_pw_sim.layout'
+        isols_matrix_out = 'isols_matrix.tsv'
+        genes_matrix_out = 'genes_matrix.tsv'
     
     # For Isolate-Isolate Comparison
     
@@ -58,8 +62,14 @@ def pw_sim(input, out, isol_meta, gene_meta, run_type, sim_metric, isol_filt, ge
         isols = data.iloc[:,1:]
         isols_trans = isols.transpose()
         isols_jac_sim = pd.DataFrame((1 - pairwise_distances(isols_trans.to_numpy(), metric = sim_metric, n_jobs = args.threads)), index=isols.columns, columns=isols.columns)
-
-        # convert to pairwise
+	
+	# round sim values to 5 dp - comment out if you want full values
+        isols_jac_sim = isols_jac_sim.round(5)
+        if output_matrix:
+            print(" - Saving isolate similarity matrix to file\n")
+            isols_jac_sim.to_csv(isols_matrix_out, sep="\t")
+        
+	# convert to pairwise
         
         isols_to_keep = np.triu(np.ones(isols_jac_sim.shape), k=1).astype('bool').reshape(isols_jac_sim.size)
         isols_jac_pw = isols_jac_sim.stack()[isols_to_keep]
@@ -93,6 +103,13 @@ def pw_sim(input, out, isol_meta, gene_meta, run_type, sim_metric, isol_filt, ge
         genes_jac_dist = pairwise_distances(genes.to_numpy(), metric = sim_metric, n_jobs = args.threads)
         genes_jac_sim = pd.DataFrame((1 - genes_jac_dist), index=genes.index, columns=genes.index)
 
+	# round sim values to 5 dp - comment out if you want full values
+        genes_jac_sim = genes_jac_sim.round(5)
+
+        if output_matrix:
+            print(" - Saving gene similarity matrix to file\n")
+            genes_jac_sim.to_csv(genes_matrix_out, sep="\t")
+	
         # convert to pairwise
         
         genes_to_keep = np.triu(np.ones(genes_jac_sim.shape), k=1).astype('bool').reshape(genes_jac_sim.size)
@@ -130,7 +147,8 @@ if __name__ == "__main__":
     parser.add_argument("-f", "--isol_filt", type = float, required = False, default = 0.5, help = "optional filter for isolate pairwise similarity")
     parser.add_argument("-e", "--gene_filt", type = float, required = False, default = 0.5, help = "optional filter for gene pairwise similarity")
     parser.add_argument("-t", "--threads", type = int, required = False, default = 1, help = "number of threads to be used")
+    parser.add_argument("-x", "--output_matrix", action = 'store_true', required = False, help = "output .tsv similarity matrix as well as list. Will not be filtered")
     args = parser.parse_args()
     
-    pw_sim(args.input, args.out, args.isol_meta, args.gene_meta, args.run_type, args.sim_metric, args.isol_filt, args.gene_filt, args.threads)
+    pw_sim(args.input, args.out, args.isol_meta, args.gene_meta, args.run_type, args.sim_metric, args.isol_filt, args.gene_filt, args.threads, args.output_matrix)
 
