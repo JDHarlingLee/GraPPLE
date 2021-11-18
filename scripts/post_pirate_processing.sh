@@ -1,9 +1,13 @@
 #!/usr/bin/bash
 
 # Author: JDHL
+
 # Basic runner script for adapting the general PIRATE output for use in GraPPLE/Graphia
-# Recreates some files, and splits out files by identity threshold
-# Can include paralogs or not (default)
+# Recreates some files (all_alleles.tsv), and then splits out files by identity threshold
+
+# Can generate files with paralogs split or not (will generate relevant files if not included in the original PIRATE analysis)
+# Files including split paralogs will be indicated with ".wp." in the file name
+
 # Heavily relies on PIRATE's excellent adapter scripts, provided in the PIRATE repository
 # Please see SionBayliss/PIRATE for more information on these
 
@@ -13,7 +17,7 @@ while [ "$1" != "" ]; do
                 -t | --thr_list )	shift
 					thr_list=$1
                                         ;;
-	        -p | --paralogs )	shift
+	        --paralogs )		shift
 					paralogs=1
 					;;
 		-d | --grapple_dir )	shift
@@ -28,12 +32,12 @@ while [ "$1" != "" ]; do
 		-h | --help )           printf "\n------------------------------------------------\n"
 					printf "\nThis is a script to adapt the standard output from PIRATE for use in GraPPLE/Graphia"
 					printf "\nYou may prefer to run some of these actions individually, but this is a wrapper script for convenience\n"
-					printf "\nEnsure you are executing this script within the output directory of your pangenome analysis\n"
+					printf "\nEnsure you are executing this script within the output directory of your PIRATE pangenome analysis\n"
 					printf "\n-t | threshold list (those used in PIRATE run, or a subset thereof)"
-					printf "\n-p | include paralogs or not (1 = yes, 0 = no). Default: no"
-					printf "\n-d | analysis directory name - a directory where new files can be created to avoid overwriting originals. Default: GraPPLE"
+					printf "\n-d | output directory name - a directory where new files can be created to avoid overwriting originals. Default: GraPPLE"
 					printf "\n-q | path to PIRATE directory - necessary for using PIRATE adapter scripts"
-					printf "\n-n | number of threads to use. Default: 2\n"
+					printf "\n-n | number of threads to use. Default: 2"
+					printf "\n--paralogs | flag to generate files with paralogs split. Default: off"
 					printf "\n------------------------------------------------\n"
 					exit 0
                                         ;;
@@ -50,7 +54,7 @@ if test -z "$thr_list"; then
 fi
 
 if test -z "$paralogs"; then
-		paralogs=0
+	paralogs=0
 fi
 
 if ! test -e "$path" || ! test -f $path/scripts/link_clusters_runner.pl || ! test -f $path/scripts/split_paralogs_runner.pl || ! test -f $path/tools/convert_format/PIRATE_to_Rtab.pl ; then
@@ -81,34 +85,33 @@ fi
 #echo "high and low set later in script"
 #exit 0
 
-
 # 1. Create paralog files and PIRATE.all_alleles.tsv (if not already present)
 
 if [[ $paralogs -eq 1 ]]; then
-	# Recreate split_paralogs_loci.tab if necessary
+	# Create split_paralog_loci.tab if necessary
 	if test -f ./split_paralog_loci.tab; then
-		echo "split_paralogs_loci.tab exists"
+		echo "split_paralog_loci.tab exists"
 	else 
 		$path/scripts/split_paralogs_runner.pl -p ./loci_paralog_categories.tab -l ./loci_list.tab -o ./ -t $threads
 	fi
 	
 	wp="wp."
 	
-	if test -f ./PIRATE.all_alleles.wp.tsv; then
+	if test -f ./${grapple_dir}/PIRATE.all_alleles.wp.tsv; then
 		echo "PIRATE.all_alleles.wp.tsv already exists"
 	else
 		mkdir ${grapple_dir}/
-		${path}/scripts/link_clusters_runner.pl -l ./loci_list.tab -l ./split_paralog_loci.tab -t $thr_list -o ./${grapple_dir}/ -c ./co-ords/ --paralogs ./loci_paralog_categories.tab -e ./paralog_clusters.tab --parallel $threads --all-alleles
-		mv ${grapple_dir}/PIRATE.all_alleles.tsv ./PIRATE.all_alleles.wp.tsv
+		${path}/scripts/link_clusters_runner.pl -l ./loci_list.tab -l ./split_paralog_loci.tab -t $thr_list -o ./${grapple_dir}/ -c ./co-ords/ --paralogs ./loci_paralog_categories.tab -e ./paralog_clusters.tab -parallel $threads --all-alleles
+		#mv ${grapple_dir}/PIRATE.all_alleles.tsv ./PIRATE.all_alleles.wp.tsv
         fi
 else
 	wp=""
-	if test -f ./PIRATE.all_alleles.tsv; then
+	if test -f ./${grapple_dir}/PIRATE.all_alleles.tsv; then
 		echo "PIRATE.all_alleles.tsv already exists"
 	else
 		mkdir ${grapple_dir}/
 		$path/scripts/link_clusters_runner.pl -l ./loci_list.tab -t $thr_list -o ./${grapple_dir}/ -c ./co-ords/ -parallel $threads --all-alleles
-		mv ${grapple_dir}/PIRATE.all_alleles.tsv ./PIRATE.all_alleles.tsv
+		#mv ${grapple_dir}/PIRATE.all_alleles.tsv ./PIRATE.all_alleles.tsv
 	fi
 fi
 
@@ -116,7 +119,7 @@ fi
 
 if test -z $high; then
 	# if not set, uses highest value to remove core genes (reduces data size for subsequent analyses) 
-	high=$(cut -f7 ./PIRATE.all_alleles.${wp}tsv | sort -n | tail -1)
+	high=$(cut -f7 ./${grapple_dir}/PIRATE.all_alleles.${wp}tsv | sort -n | tail -1)
 fi
 
 if test -z $low; then
@@ -124,19 +127,18 @@ if test -z $low; then
 	low=1
 fi
 
-kept_high=$((high-1)) # for output file name
-kept_low=$((low+1)) # for output file name
+kept_high=$(($high-1)) # for output file name
+kept_low=$(($low+1)) # for output file name
 
 
 for i in ${thr_list//,/ }
 do
-	awk -F"\t" -v thr=$i -v max=$high -v min=$low 'NR==1 {print $0}; $5==thr && $7<max && $7>min {print $0}' PIRATE.all_alleles.${wp}tsv > PIRATE.acc_alleles.${i}.${wp}genes_${kept_low}-${kept_high}.tsv 
+	awk -F"\t" -v thr=$i -v max=$high -v min=$low 'NR==1 {print $0}; $5==thr && $7<max && $7>min {print $0}' ./${grapple_dir}/PIRATE.all_alleles.${wp}tsv > ./${grapple_dir}/PIRATE.acc_alleles.${i}.${wp}genes_${kept_low}-${kept_high}.tsv 
 done
 
 # 3. Convert PIRATE files to binary format (necessary for pw_similarity.py)
 
 for i in ${thr_list//,/ }
 do
-	$path/tools/convert_format/PIRATE_to_Rtab.pl -i ./PIRATE.acc_alleles.${i}.${wp}genes_${kept_low}-${kept_high}.tsv -o ./PIRATE.acc_alleles.${i}.${wp}genes_${kept_low}-${kept_high}.binary.tsv --low 0 --high 1 
+	$path/tools/convert_format/PIRATE_to_Rtab.pl -i ./${grapple_dir}/PIRATE.acc_alleles.${i}.${wp}genes_${kept_low}-${kept_high}.tsv -o ./${grapple_dir}/PIRATE.acc_alleles.${i}.${wp}genes_${kept_low}-${kept_high}.binary.tsv --low 0 --high 1 
 done
-
