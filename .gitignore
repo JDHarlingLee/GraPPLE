@@ -5,5 +5,3 @@ __pycache__/
 # Distribution / packaging
 .vscode/
 
-# Example data
-example_data/*
