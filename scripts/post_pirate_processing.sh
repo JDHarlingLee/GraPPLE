@@ -102,7 +102,7 @@ if [[ $paralogs -eq 1 ]]; then
 	else
 		mkdir ${grapple_dir}/
 		${path}/scripts/link_clusters_runner.pl -l ./loci_list.tab -l ./split_paralog_loci.tab -t $thr_list -o ./${grapple_dir}/ -c ./co-ords/ --paralogs ./loci_paralog_categories.tab -e ./paralog_clusters.tab -parallel $threads --all-alleles
-		#mv ${grapple_dir}/PIRATE.all_alleles.tsv ./PIRATE.all_alleles.wp.tsv
+		mv ${grapple_dir}/PIRATE.all_alleles.tsv ${grapple_dir}/PIRATE.all_alleles.wp.tsv
         fi
 else
 	wp=""
