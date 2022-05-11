@@ -57,7 +57,7 @@ Example: `python edges_to_layout.py -e pangenome.edges -o example_graph`
 #### Edge File at different threshold
 Utilises adapter scripts from PIRATE to recreate the synteny graph at a particular threshold
 
-Example: `python generate_edges.sh -i PIRATE.all_alleles.90.tsv -o synteny-graph-90 -p /path/to/PIRATE/`
+Example: `bash generate_edges.sh -i PIRATE.all_alleles.90.tsv -o synteny-graph-90 -p /path/to/PIRATE/`
 
   * Requires input of a presc/absc matrix at a single threshold (see Other Scripts)
   * Requires path to the installation folder of PIRATE (e.g. pip/conda)
