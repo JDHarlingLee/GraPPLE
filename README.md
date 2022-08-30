@@ -86,4 +86,4 @@ Tested in R v3.6.3. Requires:
 Many of these scripts were initially developed from PIRATE outputs, and some make use of the excellent adapter scripts from the PIRATE repository. We also thank Sion Bayliss for his advice and useful discussions.
 
 ## Citation
-Pre-print coming soon!
+Now in press at BMC Bioinformatics
