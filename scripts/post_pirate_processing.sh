@@ -66,9 +66,19 @@ if test -z "$path"; then
 	echo "PIRATE scripts directory location inferred: $path"
 fi
 
-if ! test -e "$path" || ! test -f $path/scripts/link_clusters_runner.pl || ! test -f $path/scripts/split_paralogs_runner.pl || ! test -f $path/tools/convert_format/PIRATE_to_Rtab.pl ; then
+if ! test -e "$path" || ! test -f $path/scripts/link_clusters_runner.pl || ! test -f $path/scripts/split_paralogs_runner.pl; then
         echo "ERROR: Path to PIRATE is invalid or is missing necessary adapter scripts"
         exit 1
+fi
+
+if test -f $path/bin/PIRATE_to_Rtab.pl; then
+    Rtab_script_path="bin"
+elif test -f $path/tools/convert_format/PIRATE_to_Rtab.pl; then
+    Rtab_script_path="tools/convert_format"
+else
+    Rtab_script_path="None"
+    echo "ERROR: Path to PIRATE is invalid or is missing necessary PIRATE_to_Rtab.pl adapter script"
+    exit 1
 fi
 
 if test -z "$threads"; then
@@ -100,6 +110,7 @@ fi
 #echo $threads
 #echo $grapple_dir
 #echo $min_max
+#ls -lh $path/$Rtab_script_path/PIRATE_to_Rtab.pl
 #exit 0
 
 # 1. Create paralog files and PIRATE.all_alleles.tsv (if not already present)
@@ -169,5 +180,5 @@ done
 
 for i in ${thr_list//,/ }
 do
-	$path/tools/convert_format/PIRATE_to_Rtab.pl -i ./${grapple_dir}/PIRATE.acc_alleles.${i}.${wp}genes_${minimum}-${maximum}.tsv -o ./${grapple_dir}/PIRATE.acc_alleles.${i}.${wp}genes_${minimum}-${maximum}.binary.tsv --low 0 --high 1
+	$path/$Rtab_script_path/PIRATE_to_Rtab.pl -i ./${grapple_dir}/PIRATE.acc_alleles.${i}.${wp}genes_${minimum}-${maximum}.tsv -o ./${grapple_dir}/PIRATE.acc_alleles.${i}.${wp}genes_${minimum}-${maximum}.binary.tsv --low 0 --high 1
 done
