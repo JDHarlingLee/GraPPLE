@@ -18,7 +18,7 @@ while [ "$1" != "" ]; do
 					thr_list=$1
                                         ;;
 	        --paralogs )		shift
-					paralogs=1
+					paralogs=$1
 					;;
 		-d | --grapple_dir )	shift
 					grapple_dir=$1
